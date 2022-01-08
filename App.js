@@ -1,6 +1,13 @@
+import React from 'react';
+import Providers from './navigation';
 
-import {AppRegistry} from 'react-native';
-import Chat from './components/index';
-import {name as appName} from './app.json';
+const App = () => {
+    return <Providers />;
+}
 
-AppRegistry.registerComponent(appName, () => Chat);
+// {
+//   "name": "application",
+//   "displayName": "Zalo"
+// }
+
+export default App;
