@@ -1,4 +1,4 @@
-import BaseApiConfig, {formHeaders, headers} from './BaseApiConfig.js';
+import BaseApiConfig, { formHeaders, headers } from './BaseApiConfig.js';
 
 class FileApi {
   constructor(token) {
@@ -15,9 +15,14 @@ class FileApi {
    * }
    */
   uploadFiles(files) {
+    console.log(files);
     let formData = new FormData();
     files.forEach((file) => {
-      formData.append('file', file);
+      formData.append('file', {
+        uri: file,
+        type: 'image/jpg',
+        name: 'image.jpg',
+      });
     });
     console.log('formData: ', formData);
     return BaseApiConfig.post('uploadFiles', formData, {

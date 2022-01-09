@@ -1,4 +1,4 @@
-import React, {useContext, useState, useEffect} from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import {
   Button,
   View,
@@ -15,8 +15,8 @@ import {
 import LogInImage from './assets/logIn.png';
 import AvatarImage1 from './assets/avatar1.png';
 import LogInImage3 from './assets/logIn3.png';
-import {color, onChange} from 'react-native-reanimated';
-import {Feather} from 'react-native-vector-icons/Feather';
+import { color, onChange } from 'react-native-reanimated';
+import { Feather } from 'react-native-vector-icons/Feather';
 import {
   InputField,
   InputWrapper,
@@ -27,7 +27,7 @@ import {
 } from '../styles/AddPost';
 import FileApi from '../src/api/FileApi';
 
-const DangBai = ({navigation, route}) => {
+const DangBai = ({ navigation, route }) => {
   const [imgInfo, onImgInfo] = useState(null);
   const [text, onChangeText] = useState('');
   const [userName, onUserName] = useState('');
@@ -42,7 +42,7 @@ const DangBai = ({navigation, route}) => {
   const [isConnected, setConnected] = useState(false);
 
   useEffect(() => {
-    const {imgInfo, token} = route.params;
+    const { imgInfo, token } = route.params;
     onImgInfo(imgInfo);
     onToken(token);
   }, []);
@@ -51,7 +51,7 @@ const DangBai = ({navigation, route}) => {
     console.log('text: ', text);
     console.log('imgInfo: ', imgInfo);
     let arrImg = [];
-    arrImg.push('dgdsfbdfsb');
+    arrImg.push(imgInfo);
     console.log('arrImg: ', arrImg);
     const fileApi = new FileApi(token);
     fileApi.uploadFiles(arrImg).then((res) => {
@@ -62,7 +62,7 @@ const DangBai = ({navigation, route}) => {
   };
 
   return (
-    <View style={{backgroundColor: 'white'}}>
+    <View style={{ backgroundColor: 'white' }}>
       <ScrollView>
         <View>
           <TextInput
@@ -84,7 +84,7 @@ const DangBai = ({navigation, route}) => {
             onChangeText={(text) => onChangeText(text)}
           />
 
-          {imgInfo != null ? <AddImage source={{uri: imgInfo}} /> : null}
+          {imgInfo != null ? <AddImage source={{ uri: imgInfo }} /> : null}
           {/* {imgInfo !== null && imgInfo[0].uri !== undefined ? (
             <Image
               style={stylesNhatKy.loadPost}
@@ -104,7 +104,7 @@ const DangBai = ({navigation, route}) => {
             }}>
             <TouchableOpacity>
               <View
-                style={{flexDirection: 'row', justifyContent: 'flex-start'}}>
+                style={{ flexDirection: 'row', justifyContent: 'flex-start' }}>
                 <Image
                   style={stylesNhatKy.image2}
                   source={require('./assets/dangBai1.png')}
@@ -114,7 +114,7 @@ const DangBai = ({navigation, route}) => {
             </TouchableOpacity>
             <TouchableOpacity>
               <View
-                style={{flexDirection: 'row', justifyContent: 'flex-start'}}>
+                style={{ flexDirection: 'row', justifyContent: 'flex-start' }}>
                 <Image
                   style={stylesNhatKy.image2}
                   source={require('./assets/dangBai2.png')}
@@ -124,7 +124,7 @@ const DangBai = ({navigation, route}) => {
             </TouchableOpacity>
             <TouchableOpacity>
               <View
-                style={{flexDirection: 'row', justifyContent: 'flex-start'}}>
+                style={{ flexDirection: 'row', justifyContent: 'flex-start' }}>
                 <Image
                   style={stylesNhatKy.image2}
                   source={require('./assets/dangBai3.png')}
@@ -151,7 +151,7 @@ const DangBai = ({navigation, route}) => {
 
             <TouchableOpacity>
               <View
-                style={{flexDirection: 'row', justifyContent: 'flex-start'}}>
+                style={{ flexDirection: 'row', justifyContent: 'flex-start' }}>
                 <Image
                   style={stylesNhatKy.image2}
                   source={require('./assets/dangBai5.png')}

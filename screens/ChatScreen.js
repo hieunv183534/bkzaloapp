@@ -3,13 +3,16 @@ import { View, ScrollView, Text, Button, StyleSheet } from 'react-native';
 import { Bubble, GiftedChat, Send } from 'react-native-gifted-chat';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
-import ChatSerrvice from '../src/api/ChatService';
+import ChatService from '../src/api/ChatService';
 import ConversationApi from '../src/api/ConversationApi';
+import { HubConnectionBuilder, LogLevel, HttpTransportType } from '@microsoft/signalr';
+
 
 const ChatScreen = (route) => {
   const [messages, setMessages] = useState([]);
   const [user, onChangeUserText] = useState('');
   const [userName, onUserName] = useState('');
+  const [conversationId, onConversationId] = useState('');
   const [phone, onPhone] = useState('');
   const [token, onToken] = useState('');
   const [receiveID, onReceiveID] = useState('');
@@ -20,17 +23,18 @@ const ChatScreen = (route) => {
   const [connectionState, setConnectedStateText] = useState('');
   const [isConnected, setConnected] = useState(false);
 
-  useEffect(async () => {
+  useEffect(() => {
     const { userName, phone, token, receiveID, conversationId } = route.route.params;
     onUserName(userName);
     onPhone(phone);
-    onToken(token);
+    onToken(token.split(' ')[1]);
     onReceiveID(receiveID);
+    onConversationId(conversationId)
     console.log("conversationId: ", conversationId);
     console.log("userName: ", userName);
 
     const conversationApi = new ConversationApi(token);
-    await conversationApi
+    conversationApi
       .getConversation(conversationId, 0, 10)
       .then((res) => {
         console.log(res);
@@ -38,18 +42,15 @@ const ChatScreen = (route) => {
           let messages = [];
           const mess = res.data.data.messages;
           for (let i in mess) {
-            let nhan = 0;
             let gui = 0;
             if (receiveID === mess[i].sender.accountId) {
               gui = 2;
-              nhan = 1;
             }
             else {
               gui = 1;
-              nhan = 2;
             }
             const curr = {
-              _id: nhan,
+              _id: mess[i].messageId,
               text: mess[i].content,
               createdAt: mess[i].createdAt,
               user: {
@@ -57,7 +58,6 @@ const ChatScreen = (route) => {
                 name: mess[i].sender.userName,
                 avatar: 'https://placeimg.com/140/140/any',
               },
-
             };
             messages.push(curr)
           }
@@ -67,71 +67,69 @@ const ChatScreen = (route) => {
       .catch((error) => {
         console.error(error);
       });
-    // onChatServer(new ChatSerrvice(token.split(' ')[1]));
-    // const abc = new ChatSerrvice(token.split(' ')[1]);
-    // console.log('abc: ', abc);
-    // abc.connection1();
-    // console.log('abc conec: ', abc.connection);
-
-    // abc.connection.start().then((res) => {
-    //   console.log('res: ', res);
-    //   console.log('AAAAAAAAAAAAAAA');
-    // });
   }, []);
 
-  // useEffect(() => {
-  //   setMessages([
-  //     {
-  //       _id: 1,
-  //       text: 'Hello developer ABC',
-  //       createdAt: new Date(),
-  //       user: {
-  //         _id: 2,
-  //         name: 'React Native',
-  //         avatar: 'https://placeimg.com/140/140/any',
-  //       },
-  //     },
-  //     {
-  //       _id: 4,
-  //       text: 'Hello world',
-  //       createdAt: new Date(),
-  //       user: {
-  //         _id: 1,
-  //         name: 'React Native',
-  //         avatar: 'https://placeimg.com/140/140/any',
-  //       },
-  //     },
-  //     {
-  //       _id: 4,
-  //       text: 'yyyyyyyyyyyyyyyyyyyy',
-  //       createdAt: new Date(),
-  //       user: {
-  //         _id: 1,
-  //         name: 'React Native',
-  //         avatar: 'https://placeimg.com/140/140/any',
-  //       },
-  //     },
-  //     {
-  //       _id: 1,
-  //       text: 'aaaaaaaaaaaaaaaaa',
-  //       createdAt: new Date(),
-  //       user: {
-  //         _id: 4,
-  //         name: 'React Native',
-  //         avatar: 'https://placeimg.com/140/140/any',
-  //       },
-  //     },
-  //   ]);
-  // }, []);
+  useEffect(() => {
+    const { token, conversationId } = route.route.params;
+    console.log("token: ", token.split(' ')[1]);
 
-  // const onSend = (messages) => {
-  //   console.log('mess: ', messages);
-  //   setMessages((previousMessages) =>
-  //     GiftedChat.append(previousMessages, messages),
-  //   );
+    const connection = new HubConnectionBuilder()
+      .withUrl("http://hieunv183534-001-site1.gtempurl.com/chat",
+        {
+          accessTokenFactory: () => token.split(' ')[1],
+          transport: HttpTransportType.LongPolling
+        })
+      .configureLogging(LogLevel.Information)
+      .build();
 
-  //   conn.invoke('Send', `${'Đức: '} say ${messages[0].text}`);
-  // };
+    connection.on("onmessage", (user, message) => {
+      console.log(`${user} say ${JSON.stringify(message)}`);
+      console.log("message.messageId: ", message.messageId);
+      if (message.messageId !== undefined) {
+        let ex = false;
+        for (let i in messages) {
+          if (messages[i]._id === message.messageId) ex = true;
+        }
+        if (!ex) {
+          const gui = receiveID === message.senderId ? 2 : 1;
+          const mess = {
+            _id: message.messageId,
+            text: message.content,
+            createdAt: message.createdAt,
+            user: {
+              _id: gui,
+              name: '',
+              avatar: 'https://placeimg.com/140/140/any',
+            },
+          };
+          setMessages((previousMessages) =>
+            GiftedChat.append(previousMessages, [mess]),
+          );
+        }
+      }
+      console.log("message123: ", message)
+    });
+
+    connection.start().then(() => {
+      console.log("okok");
+      connection.invoke("JoinChat", conversationId);
+      // setTimeout(() => {
+      //   var mes = { conversationId: "b8e30df1-6fd3-11ec-ac96-00155e015604", content: "Test nhé okok!", receiverId: "0b3f2323-6dd3-11ec-ac96-00155e015604" };
+      //   connection.invoke('Send', mes);
+      // }, 10000)
+    });
+    onChatServer(connection);
+  }, []);
+
+  const onSend = (messages) => {
+    var mes = { conversationId: conversationId, content: messages[0].text, receiverId: receiveID };
+    setMessages((previousMessages) =>
+      GiftedChat.append(previousMessages, messages),
+    );
+    chatServer.invoke('Send', mes);
+    console.log("mess send: ", messages);
+
+  }
   const renderSend = (props) => {
     return (
       <Send {...props}>
