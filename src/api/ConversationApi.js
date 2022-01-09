@@ -1,8 +1,16 @@
 import BaseApiConfig, { headers } from "./BaseApiConfig.js";
 
- class ConversationApi{
-    constructor(){}
+class ConversationApi {
+    constructor(token) {
+        this.token = token;
 
+        this.headers = {
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: this.token,
+            },
+        };
+    }
     /**
      * lấy danh sách các cuộc trò chuyện của bản thân
      * @param {*} index chỉ số bắt đầu
@@ -13,8 +21,8 @@ import BaseApiConfig, { headers } from "./BaseApiConfig.js";
      *  -data {1 list {conversationId, partner:{accountId,userName,avatarUrl}, lastMessage:{messageId,content,createdAt,senderId}}}
      * }
      */
-    getListConversation(index,count){
-        return BaseApiConfig.get(`get_list_conversation?index=${index}&count=${count}`,headers);
+    getListConversation(index, count) {
+        return BaseApiConfig.post(`get_list_conversation?index=${index}&count=${count}`, {}, this.headers);
     }
 
     /**
@@ -28,8 +36,8 @@ import BaseApiConfig, { headers } from "./BaseApiConfig.js";
      *  -data {conversation, messages}}
      * }
      */
-    getConversation(conversationId,index,count){
-        return BaseApiConfig.get(`get_conversation?conversationId=${conversationId}&index=${index}&count=${count}`,headers);
+    getConversation(conversationId, index, count) {
+        return BaseApiConfig.post(`get_conversation?conversationId=${conversationId}&index=${index}&count=${count}`, {}, this.headers);
     }
 
     /**
@@ -41,9 +49,9 @@ import BaseApiConfig, { headers } from "./BaseApiConfig.js";
      *  -data {}
      * }
      */
-    deleteConversation(conversationId){
-        return BaseApiConfig.delete(`delete_conversation/${conversationId}`,headers);
+    deleteConversation(conversationId) {
+        return BaseApiConfig.delete(`delete_conversation/${conversationId}`, this.headers);
     }
 }
 
-export default new ConversationApi();
+export default ConversationApi;

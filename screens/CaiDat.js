@@ -1,4 +1,4 @@
-import React, {useContext, useState} from 'react';
+import React, { useContext, useState } from 'react';
 import {
   Button,
   View,
@@ -15,10 +15,11 @@ import {
 import LogInImage from './assets/logIn.png';
 import AvatarImage1 from './assets/avatar1.png';
 import LogInImage3 from './assets/logIn3.png';
-import {color, onChange} from 'react-native-reanimated';
-import {Feather} from 'react-native-vector-icons/Feather';
+import { color, onChange } from 'react-native-reanimated';
+import { Feather } from 'react-native-vector-icons/Feather';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const CaiDat = ({navigation}) => {
+const CaiDat = ({ navigation }) => {
   return (
     <View>
       <ScrollView>
@@ -231,7 +232,7 @@ const CaiDat = ({navigation}) => {
             </View>
           </View>
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => navigation.navigate('DangXuat')}>
+        <TouchableOpacity onPress={() => { AsyncStorage.removeItem('token'); navigation.navigate('DangXuat') }}>
           <View
             style={{
               flexDirection: 'row',

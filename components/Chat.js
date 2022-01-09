@@ -13,7 +13,7 @@ export default class Chat extends Component {
 
 
     componentDidMount() {
-        const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVfbmFtZSI6IjA5NzE4ODMwMjUiLCJuYmYiOjE2NDE1NzMwNzgsImV4cCI6MTY0NDE2NTA3OCwiaWF0IjoxNjQxNTczMDc4fQ.ztFkaTPlOna_XhW7acFIRTdTOLwuGzkbRDMu6YVp6Wg";
+        const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVfbmFtZSI6IjA4OTgwNjE1NzIiLCJuYmYiOjE2NDE2OTQyMzgsImV4cCI6MTY0NDI4NjIzOCwiaWF0IjoxNjQxNjk0MjM4fQ.ZRdDheLDXw6_VykRkqwkD7_7EuZqyXM6IVvsFhsqf7Q";
         const connection = new HubConnectionBuilder()
             .withUrl("http://hieunv183534-001-site1.gtempurl.com/chat",
                 {

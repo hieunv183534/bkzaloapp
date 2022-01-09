@@ -20,27 +20,64 @@ import { Feather } from 'react-native-vector-icons/Feather';
 import AccountApi from '../src/api/AccountApi';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { listUser } from '../data/listUser';
+import ConversationApi from '../src/api/ConversationApi';
+
 const NhanTin = ({ navigation }) => {
+  const [conversations, setConversations] = useState([]);
   const [receive, onReceive] = useState([]);
   const [phoneInput, onChangePhoneInput] = useState('');
   const [token, onToken] = useState('');
 
+  // useEffect(async () => {
+  //   console.log('ConversationApi');
+
+  // }, []);
+
   useEffect(() => {
-    onReceive(listUser);
-    AsyncStorage.getItem('token').then((data) => {
+    AsyncStorage.getItem('token').then(async (data) => {
       onToken(data);
+      console.log('ConversationApi');
+      const conversationApi = new ConversationApi(data);
+      await conversationApi
+        .getListConversation(0, 10)
+        .then((res) => {
+          console.log(res);
+          //res.data.data.conversations = [] => conversationId/ lastMessage.content * createdAt/ partner.accountId *avatarUrl *userName
+          if (res.data.code === 1000) {
+            let conversations = [];
+            const conv = res.data.data.conversations;
+            for (let i in conv) {
+              // console.log("conv.partner.accountId:", conv[i]);
+
+              const curr = {
+                id: conv[i].partner.accountId,
+                conversationId: conv[i].conversationId,
+                name: conv[i].partner.userName,
+                phone: '00000000000',
+                // image: img !== null ? require('./assets/zalologo.png') : img,
+                image: require('./assets/zalologo.png'),
+                message: conv[i].lastMessage.content,
+                time: conv[i].lastMessage.createdAt,
+              };
+              conversations.push(curr)
+            }
+            setConversations(conversations);
+            onReceive(conversations);
+
+          }
+        })
+        .catch((error) => {
+          console.error(error);
+        });
     });
   }, []);
-  useEffect(() => {
-    console.log('phoneInput: ', phoneInput);
-  }, phoneInput);
 
   const getAccountByPhone = async (text) => {
     if (text !== '') {
       let arr = [];
       const accountApi = new AccountApi(token);
       await accountApi
-        .getAccountByPhoneNumber('0898061574')
+        .getAccountByPhoneNumber(text)
         .then((res) => {
           console.log(res.data);
           const img = res.data.data.avatarUrl;
@@ -61,115 +98,114 @@ const NhanTin = ({ navigation }) => {
         });
       onReceive(arr);
     } else {
-      onReceive(listUser);
+      onReceive(conversations);
     }
   };
 
   // const NhanTin2=() =>navigation.navigate('NhanTin2', {itemId: item.id, itemName: item.name,});
   return (
     <View style={{ flex: 1, backgroundColor: 'white' }}>
-      <ScrollView>
-        <View>
-          <View
-            style={{
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-              marginTop: 0,
-            }}>
-            <Image
-              style={stylesSearchBar.image}
-              source={require('./assets/search.png')}
-            />
-            <TextInput
-              style={stylesSearchBar.input}
-              placeholder="Tìm bạn bè, tin nhắn NT..."
-              // onChangeText={(text) => onChangePhoneInput(text)}
-              onChangeText={(text) => getAccountByPhone(text)}
-              placeholderTextColor="white"
-            />
+      <View>
+        <View
+          style={{
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            marginTop: 0,
+          }}>
+          <Image
+            style={stylesSearchBar.image}
+            source={require('./assets/search.png')}
+          />
+          <TextInput
+            style={stylesSearchBar.input}
+            placeholder="Tìm bạn bè, tin nhắn NT..."
+            // onChangeText={(text) => onChangePhoneInput(text)}
+            onChangeText={(text) => getAccountByPhone(text)}
+            placeholderTextColor="white"
+          />
 
-            <View style={{ flexDirection: 'row', marginTop: 0 }}>
-              <TouchableOpacity>
-                <Image
-                  style={stylesSearchBar.image}
-                  source={require('./assets/tinNhan2.png')}
-                />
-              </TouchableOpacity>
-              <TouchableOpacity>
-                <Image
-                  style={stylesSearchBar.image}
-                  source={require('./assets/tinNhan3.png')}
-                />
-              </TouchableOpacity>
-            </View>
+          <View style={{ flexDirection: 'row', marginTop: 0 }}>
+            <TouchableOpacity>
+              <Image
+                style={stylesSearchBar.image}
+                source={require('./assets/tinNhan2.png')}
+              />
+            </TouchableOpacity>
+            <TouchableOpacity>
+              <Image
+                style={stylesSearchBar.image}
+                source={require('./assets/tinNhan3.png')}
+              />
+            </TouchableOpacity>
           </View>
         </View>
+      </View>
 
-        <View style={{ backgroundColor: 'white' }}>
-          <FlatList
-            data={receive}
-            renderItem={({ item }) => (
-              <View>
-                <TouchableOpacity
-                  activeOpacity={0.2}
-                  onPress={() =>
-                    navigation.navigate('Chat', {
-                      userName: item.name,
-                      phone: item.phone,
-                      token: token,
-                      receiveID: item.id,
-                    })
-                  }>
-                  <View style={{ flexDirection: 'row', marginTop: 0 }}>
-                    <Image
-                      style={stylesNhanTin.avatarImage}
-                      source={item.image}
-                    />
-                    {/* </TouchableOpacity> */}
-                    <ScrollView
+      <View style={{ backgroundColor: 'white' }}>
+        <FlatList
+          data={receive}
+          renderItem={({ item }) => (
+            <View>
+              <TouchableOpacity
+                activeOpacity={0.2}
+                onPress={() =>
+                  navigation.navigate('Chat', {
+                    userName: item.name,
+                    conversationId: item.conversationId,
+                    phone: item.phone,
+                    token: token,
+                    receiveID: item.id,
+                  })
+                }>
+                <View style={{ flexDirection: 'row', marginTop: 0 }}>
+                  <Image
+                    style={stylesNhanTin.avatarImage}
+                    source={item.image}
+                  />
+                  {/* </TouchableOpacity> */}
+                  <ScrollView
+                    style={{
+                      borderBottomColor: '#d3d3d3',
+                      borderBottomWidth: 1,
+                      borderBottomStartRadius: 0,
+                      borderTopEndRadius: 400,
+                    }}>
+                    <View
                       style={{
-                        borderBottomColor: '#d3d3d3',
-                        borderBottomWidth: 1,
-                        borderBottomStartRadius: 0,
-                        borderTopEndRadius: 400,
+                        flexDirection: 'row',
+                        justifyContent: 'space-between',
+                        marginTop: 0,
                       }}>
-                      <View
-                        style={{
-                          flexDirection: 'row',
-                          justifyContent: 'space-between',
-                          marginTop: 0,
-                        }}>
-                        {/* <TouchableOpacity activeOpacity={0.2} onPress={() =>{navigation.navigate('NhanTin2', {itemId: item.id, itemName: item.name,});}}> */}
-                        <View>
-                          <Text style={stylesNhanTin.nameText}>
-                            {item.name}
-                          </Text>
-                          <Text style={stylesNhanTin.messengerText}>
-                            {item.message}
-                          </Text>
-                        </View>
-                        <Text style={stylesNhanTin.messengerTime}>
-                          {item.time}
+                      {/* <TouchableOpacity activeOpacity={0.2} onPress={() =>{navigation.navigate('NhanTin2', {itemId: item.id, itemName: item.name,});}}> */}
+                      <View>
+                        <Text style={stylesNhanTin.nameText}>
+                          {item.name}
+                        </Text>
+                        <Text style={stylesNhanTin.messengerText}>
+                          {item.message}
                         </Text>
                       </View>
-                    </ScrollView>
-                  </View>
-                </TouchableOpacity>
-              </View>
-            )}
-            keyExtractor={(item) => '${item.id}'}
-            ListFooterComponent={<View style={{ height: 20 }} />}
-          />
-        </View>
-        <View>
-          <Text style={{ marginTop: 30, textAlign: 'center' }}>
-            Dễ dàng tìm kiếm và trò chuyện với bạn bè
+                      <Text style={stylesNhanTin.messengerTime}>
+                        {item.time}
+                      </Text>
+                    </View>
+                  </ScrollView>
+                </View>
+              </TouchableOpacity>
+            </View>
+          )}
+          keyExtractor={(item) => '${item.id}'}
+          ListFooterComponent={<View style={{ height: 20 }} />}
+        />
+      </View>
+      <View>
+        <Text style={{ marginTop: 30, textAlign: 'center' }}>
+          Dễ dàng tìm kiếm và trò chuyện với bạn bè
           </Text>
-          <TouchableOpacity activeOpacity={0.2}>
-            <Text style={stylesNhanTin.button}>TÌM THÊM BẠN</Text>
-          </TouchableOpacity>
-        </View>
-      </ScrollView>
+        <TouchableOpacity activeOpacity={0.2}>
+          <Text style={stylesNhanTin.button}>TÌM THÊM BẠN</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 };

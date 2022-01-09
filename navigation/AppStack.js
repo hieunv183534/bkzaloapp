@@ -1,7 +1,7 @@
 import React from 'react';
-import {View, TouchableOpacity, Text} from 'react-native';
-import {createStackNavigator} from '@react-navigation/stack';
-import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
+import { View, TouchableOpacity, Text } from 'react-native';
+import { createStackNavigator } from '@react-navigation/stack';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
@@ -27,38 +27,38 @@ import EditProfileScreen from '../screens/EditProfileScreen';
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 
-const Personal = ({navigation}) => (
+const Personal = ({ navigation }) => (
   <Stack.Navigator>
     <Stack.Screen
       name="CaNhan"
       component={CaNhan}
-      options={{headerShown: false}}
+      options={{ headerShown: false }}
     />
 
     <Stack.Screen
       name="CaiDat"
       component={CaiDat}
-      options={{headerShown: false}}
+      options={{ headerShown: false }}
     />
     <Stack.Screen
       name="DangXuat"
       component={LoginScreen}
-      options={{headerShown: false}}
+      options={{ headerShown: false }}
     />
   </Stack.Navigator>
 );
 
-const Messages = ({navigation}) => (
+const Messages = ({ navigation }) => (
   <Stack.Navigator>
     <Stack.Screen
       name="NhanTin"
       component={NhanTin}
-      options={{headerShown: false}}
+      options={{ headerShown: false }}
     />
     <Stack.Screen
       name="Chat"
       component={ChatScreen}
-      options={({route}) => ({
+      options={({ route }) => ({
         title: route.params.userName,
         headerBackTitleVisible: false,
       })}
@@ -66,43 +66,43 @@ const Messages = ({navigation}) => (
   </Stack.Navigator>
 );
 
-const FeedStack = ({navigation}) => (
+const FeedStack = ({ navigation }) => (
   <Stack.Navigator>
     <Stack.Screen
       name="NhatKy"
       component={NhatKy}
-      options={{headerShown: false}}
+      options={{ headerShown: false }}
     />
     <Stack.Screen
       name="DangBai"
       component={DangBai}
-      options={{headerShown: false}}
+      options={{ headerShown: false }}
     />
     <Stack.Screen
       name="AddPostScreen"
       component={AddPostScreen}
-      options={{headerShown: false}}
+      options={{ headerShown: false }}
     />
     <Stack.Screen
       name="TrangCaNhan"
       component={TrangCaNhan}
-      options={{headerShown: false}}
+      options={{ headerShown: false }}
     />
     <Stack.Screen
       name="TrangCaNhan2"
       component={TrangCaNhan2}
-      options={{headerShown: false}}
+      options={{ headerShown: false }}
     />
   </Stack.Navigator>
 );
 
-const MessageStack = ({navigation}) => (
+const MessageStack = ({ navigation }) => (
   <Stack.Navigator>
     <Stack.Screen name="Messages" component={MessagesScreen} />
     <Stack.Screen
       name="Chat"
       component={ChatScreen}
-      options={({route}) => ({
+      options={({ route }) => ({
         title: route.params.userName,
         headerBackTitleVisible: false,
       })}
@@ -110,7 +110,7 @@ const MessageStack = ({navigation}) => (
   </Stack.Navigator>
 );
 
-const ProfileStack = ({navigation}) => (
+const ProfileStack = ({ navigation }) => (
   <Stack.Navigator>
     <Stack.Screen
       name="Profile"
@@ -156,13 +156,13 @@ const AppStack = () => {
       <Tab.Screen
         name="Tin nhắn"
         component={Messages}
-        options={({route}) => ({
+        options={({ route }) => ({
           tabBarVisible: getTabBarVisibility(route),
           // Or Hide tabbar when push!
           // https://github.com/react-navigation/react-navigation/issues/7677
           // tabBarVisible: route.state && route.state.index === 0,
           tabBarLabel: 'Tin Nhắn',
-          tabBarIcon: ({color, size}) => (
+          tabBarIcon: ({ color, size }) => (
             <Ionicons
               name="chatbox-ellipses-outline"
               color={color}
@@ -210,13 +210,13 @@ const AppStack = () => {
       <Tab.Screen
         name="Khám Phá"
         component={KhamPha}
-        options={({route}) => ({
+        options={({ route }) => ({
           tabBarVisible: getTabBarVisibility(route),
           // Or Hide tabbar when push!
           // https://github.com/react-navigation/react-navigation/issues/7677
           // tabBarVisible: route.state && route.state.index === 0,
           tabBarLabel: 'Khám Phá',
-          tabBarIcon: ({color, size}) => (
+          tabBarIcon: ({ color, size }) => (
             <Ionicons
               name="chatbox-ellipses-outline"
               color={color}
@@ -240,10 +240,10 @@ const AppStack = () => {
       <Tab.Screen
         name="Home"
         component={FeedStack}
-        options={({route}) => ({
+        options={({ route }) => ({
           tabBarLabel: 'Nhật Ký',
           // tabBarVisible: route.state && route.state.index === 0,
-          tabBarIcon: ({color, size}) => (
+          tabBarIcon: ({ color, size }) => (
             <MaterialCommunityIcons
               name="home-outline"
               color={color}
@@ -255,13 +255,13 @@ const AppStack = () => {
       <Tab.Screen
         name="Messages"
         component={MessageStack}
-        options={({route}) => ({
+        options={({ route }) => ({
           tabBarVisible: getTabBarVisibility(route),
           // Or Hide tabbar when push!
           // https://github.com/react-navigation/react-navigation/issues/7677
           // tabBarVisible: route.state && route.state.index === 0,
           tabBarLabel: 'Danh bạ',
-          tabBarIcon: ({color, size}) => (
+          tabBarIcon: ({ color, size }) => (
             <Ionicons
               name="chatbox-ellipses-outline"
               color={color}
@@ -275,7 +275,7 @@ const AppStack = () => {
         component={Personal}
         options={{
           tabBarLabel: 'Cá nhân',
-          tabBarIcon: ({color, size}) => (
+          tabBarIcon: ({ color, size }) => (
             <Ionicons name="person-outline" color={color} size={size} />
           ),
         }}
