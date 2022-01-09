@@ -90,8 +90,8 @@ const ChatScreen = (route) => {
         for (let i in messages) {
           if (messages[i]._id === message.messageId) ex = true;
         }
-        if (!ex) {
-          const gui = receiveID === message.senderId ? 2 : 1;
+        const gui = receiveID === message.senderId ? 2 : 1;
+        if (!ex && gui === 2) {
           const mess = {
             _id: message.messageId,
             text: message.content,
