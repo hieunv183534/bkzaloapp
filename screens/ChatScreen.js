@@ -70,7 +70,7 @@ const ChatScreen = (route) => {
   }, []);
 
   useEffect(() => {
-    const { token, conversationId } = route.route.params;
+    const { token, conversationId, receiveID } = route.route.params;
     console.log("token: ", token.split(' ')[1]);
 
     const connection = new HubConnectionBuilder()
