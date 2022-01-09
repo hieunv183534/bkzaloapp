@@ -17,9 +17,9 @@ const Routes = () => {
     });
   }, []);
 
-  useEffect(() => {
-    console.log('user: ', user);
-  }, user);
+  // useEffect(() => {
+  //   console.log('user: ', user);
+  // }, user);
   return (
     <NavigationContainer>
       {user ? <AppStack /> : <AuthStack />}

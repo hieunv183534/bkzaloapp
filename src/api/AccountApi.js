@@ -4,7 +4,6 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 class AccountApi {
   constructor(token) {
     this.token = token;
-    this.connection = null;
 
     this.headers = {
       headers: {

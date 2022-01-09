@@ -1,6 +1,6 @@
-import React, {useState, useEffect, useCallback} from 'react';
-import {View, ScrollView, Text, Button, StyleSheet} from 'react-native';
-import {Bubble, GiftedChat, Send} from 'react-native-gifted-chat';
+import React, { useState, useEffect, useCallback } from 'react';
+import { View, ScrollView, Text, Button, StyleSheet } from 'react-native';
+import { Bubble, GiftedChat, Send } from 'react-native-gifted-chat';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import ChatSerrvice from '../src/api/ChatService';
@@ -20,21 +20,22 @@ const ChatScreen = (route) => {
   const [isConnected, setConnected] = useState(false);
 
   useEffect(() => {
-    const {userName, phone, token, receiveID} = route.route.params;
+    const { userName, phone, token, receiveID, conversationId } = route.route.params;
     onUserName(userName);
     onPhone(phone);
     onToken(token);
     onReceiveID(receiveID);
+    console.log("conversationId: ", conversationId);
     // onChatServer(new ChatSerrvice(token.split(' ')[1]));
-    const abc = new ChatSerrvice(token.split(' ')[1]);
-    console.log('abc: ', abc);
-    abc.connection1();
-    console.log('abc conec: ', abc.connection);
+    // const abc = new ChatSerrvice(token.split(' ')[1]);
+    // console.log('abc: ', abc);
+    // abc.connection1();
+    // console.log('abc conec: ', abc.connection);
 
-    abc.connection.start().then((res) => {
-      console.log('res: ', res);
-      console.log('AAAAAAAAAAAAAAA');
-    });
+    // abc.connection.start().then((res) => {
+    //   console.log('res: ', res);
+    //   console.log('AAAAAAAAAAAAAAA');
+    // });
   }, []);
 
   useEffect(() => {
@@ -76,7 +77,7 @@ const ChatScreen = (route) => {
         <View>
           <MaterialCommunityIcons
             name="send-circle"
-            style={{marginBottom: 5, marginRight: 5}}
+            style={{ marginBottom: 5, marginRight: 5 }}
             size={32}
             color="#2e64e5"
           />

@@ -139,182 +139,180 @@ const NhatKy = ({ navigation }) => {
   ];
   return (
     <View style={{ backgroundColor: 'white' }}>
-      <ScrollView>
-        <View>
-          <ScrollView>
-            <View
-              style={{
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-                marginTop: 0,
-              }}>
-              <Image
-                style={stylesSearchBar.image}
-                source={require('./assets/search.png')}
-              />
-              <TextInput
-                style={stylesSearchBar.input}
-                placeholder="Tìm bạn bè, tin nhắn ..."
-                placeholderTextColor="white"
-              />
-              <ScrollView>
-                <View style={{ flexDirection: 'row', marginTop: 0 }}>
-                  <TouchableOpacity>
-                    <Image
-                      style={stylesSearchBar.image}
-                      source={require('./assets/nhatKy2.png')}
-                    />
-                  </TouchableOpacity>
-                  <TouchableOpacity>
-                    <Image
-                      style={stylesSearchBar.image}
-                      source={require('./assets/nhatKy3.png')}
-                    />
-                  </TouchableOpacity>
-                </View>
-              </ScrollView>
-            </View>
-          </ScrollView>
-        </View>
-
-        <View>
-          <View
-            style={{
-              flexDirection: 'row',
-              justifyContent: 'flex-start',
-              marginTop: 20,
-              backgroundColor: 'white',
-              borderColor: 'gray',
-              borderRadius: 1,
-            }}>
-            <TouchableOpacity
-              onPress={() => navigation.navigate('TrangCaNhan')}>
-              <Image
-                style={stylesNhatKy.image1}
-                source={require('./assets/avatar1.png')}
-              />
-            </TouchableOpacity>
-            <TouchableOpacity
-              onPress={() => navigation.navigate('DangBai', { imgInfo: null })}>
-              <Text style={stylesNhatKy.text1}>Hôm nay bạn thế nào?</Text>
-            </TouchableOpacity>
-          </View>
-          <View
-            style={{ backgroundColor: '#f5f5f5', height: 1, width: 500 }}></View>
-
+      <View>
+        <ScrollView>
           <View
             style={{
               flexDirection: 'row',
               justifyContent: 'space-between',
-              marginRight: 15,
-              marginBottom: 5,
-              marginTop: 5,
+              marginTop: 0,
             }}>
-            <TouchableOpacity onPress={selectFile}>
-              <View
-                style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                <Image
-                  style={stylesNhatKy.image2}
-                  source={require('./assets/nhatKy4.png')}
-                />
-                <Text>Đăng ảnh</Text>
-              </View>
-            </TouchableOpacity>
-            <TouchableOpacity>
-              <View
-                style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                <Image
-                  style={stylesNhatKy.image2}
-                  source={require('./assets/nhatKy5.png')}
-                />
-                <Text>Đăng video</Text>
-              </View>
-            </TouchableOpacity>
-            <TouchableOpacity>
-              <View
-                style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                <Image
-                  style={stylesNhatKy.image2}
-                  source={require('./assets/nhatKy6.png')}
-                />
-                <Text>Tạo album</Text>
-              </View>
-            </TouchableOpacity>
-          </View>
-        </View>
-
-        <View style={{ backgroundColor: 'white' }}>
-          <FlatList
-            data={dataNhatKy}
-            renderItem={({ item }) => (
-              <View>
-                <View
-                  style={{
-                    backgroundColor: '#f5f5f5',
-                    height: 4,
-                    width: 500,
-                  }}></View>
-                {/* <TouchableOpacity activeOpacity={0.2} onPress={() =>{navigation.navigate('NhanTin2', {itemId: item.id, itemName: item.name,});}}> */}
-                <View
-                  style={{
-                    flexDirection: 'row',
-                    justifyContent: 'space-between',
-                    marginTop: 0,
-                  }}>
-                  <View
-                    style={{
-                      flexDirection: 'row',
-                      justifyContent: 'flex-start',
-                      marginTop: 0,
-                    }}>
-                    <TouchableOpacity
-                      activeOpacity={0.2}
-                      onPress={() => navigation.navigate('TrangCaNhan2')}>
-                      <Image
-                        style={stylesNhatKy.avatarPost}
-                        source={require('./assets/avatar2.png')}
-                      />
-                    </TouchableOpacity>
-                    {/* <TouchableOpacity activeOpacity={0.2} onPress={() =>{navigation.navigate('NhanTin2', {itemId: item.id, itemName: item.name,});}}> */}
-                    <View>
-                      <Text style={stylesNhatKy.namePost}>{item.name}</Text>
-                      <Text style={stylesNhatKy.timePost}>{item.time}</Text>
-                    </View>
-                  </View>
+            <Image
+              style={stylesSearchBar.image}
+              source={require('./assets/search.png')}
+            />
+            <TextInput
+              style={stylesSearchBar.input}
+              placeholder="Tìm bạn bè, tin nhắn ..."
+              placeholderTextColor="white"
+            />
+            <ScrollView>
+              <View style={{ flexDirection: 'row', marginTop: 0 }}>
+                <TouchableOpacity>
                   <Image
-                    style={stylesNhatKy.image2}
-                    source={require('./assets/nhatKy7.png')}
+                    style={stylesSearchBar.image}
+                    source={require('./assets/nhatKy2.png')}
                   />
-                </View>
-                <Text style={stylesNhatKy.contentPost}>{item.content}</Text>
-                <Image
-                  style={stylesNhatKy.imagePost}
-                  source={require('./assets/baiDang1.png')}
-                />
+                </TouchableOpacity>
+                <TouchableOpacity>
+                  <Image
+                    style={stylesSearchBar.image}
+                    source={require('./assets/nhatKy3.png')}
+                  />
+                </TouchableOpacity>
+              </View>
+            </ScrollView>
+          </View>
+        </ScrollView>
+      </View>
+
+      <View>
+        <View
+          style={{
+            flexDirection: 'row',
+            justifyContent: 'flex-start',
+            marginTop: 20,
+            backgroundColor: 'white',
+            borderColor: 'gray',
+            borderRadius: 1,
+          }}>
+          <TouchableOpacity
+            onPress={() => navigation.navigate('TrangCaNhan')}>
+            <Image
+              style={stylesNhatKy.image1}
+              source={require('./assets/avatar1.png')}
+            />
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => navigation.navigate('DangBai', { imgInfo: null })}>
+            <Text style={stylesNhatKy.text1}>Hôm nay bạn thế nào?</Text>
+          </TouchableOpacity>
+        </View>
+        <View
+          style={{ backgroundColor: '#f5f5f5', height: 1, width: 500 }}></View>
+
+        <View
+          style={{
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            marginRight: 15,
+            marginBottom: 5,
+            marginTop: 5,
+          }}>
+          <TouchableOpacity onPress={selectFile}>
+            <View
+              style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+              <Image
+                style={stylesNhatKy.image2}
+                source={require('./assets/nhatKy4.png')}
+              />
+              <Text>Đăng ảnh</Text>
+            </View>
+          </TouchableOpacity>
+          <TouchableOpacity>
+            <View
+              style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+              <Image
+                style={stylesNhatKy.image2}
+                source={require('./assets/nhatKy5.png')}
+              />
+              <Text>Đăng video</Text>
+            </View>
+          </TouchableOpacity>
+          <TouchableOpacity>
+            <View
+              style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+              <Image
+                style={stylesNhatKy.image2}
+                source={require('./assets/nhatKy6.png')}
+              />
+              <Text>Tạo album</Text>
+            </View>
+          </TouchableOpacity>
+        </View>
+      </View>
+
+      <View style={{ backgroundColor: 'white' }}>
+        <FlatList
+          data={dataNhatKy}
+          renderItem={({ item }) => (
+            <View>
+              <View
+                style={{
+                  backgroundColor: '#f5f5f5',
+                  height: 4,
+                  width: 500,
+                }}></View>
+              {/* <TouchableOpacity activeOpacity={0.2} onPress={() =>{navigation.navigate('NhanTin2', {itemId: item.id, itemName: item.name,});}}> */}
+              <View
+                style={{
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                  marginTop: 0,
+                }}>
                 <View
                   style={{
                     flexDirection: 'row',
                     justifyContent: 'flex-start',
-                    marginTop: 10,
+                    marginTop: 0,
                   }}>
-                  <Image
-                    style={stylesNhatKy.image2}
-                    source={require('./assets/nhatKy8.png')}
-                  />
-                  <Text>{item.like}</Text>
-                  <Image
-                    style={stylesNhatKy.image2}
-                    source={require('./assets/nhatKy9.png')}
-                  />
-                  <Text>{item.comment}</Text>
+                  <TouchableOpacity
+                    activeOpacity={0.2}
+                    onPress={() => navigation.navigate('TrangCaNhan2')}>
+                    <Image
+                      style={stylesNhatKy.avatarPost}
+                      source={require('./assets/avatar2.png')}
+                    />
+                  </TouchableOpacity>
+                  {/* <TouchableOpacity activeOpacity={0.2} onPress={() =>{navigation.navigate('NhanTin2', {itemId: item.id, itemName: item.name,});}}> */}
+                  <View>
+                    <Text style={stylesNhatKy.namePost}>{item.name}</Text>
+                    <Text style={stylesNhatKy.timePost}>{item.time}</Text>
+                  </View>
                 </View>
+                <Image
+                  style={stylesNhatKy.image2}
+                  source={require('./assets/nhatKy7.png')}
+                />
               </View>
-            )}
-            keyExtractor={(item) => '${item.id}'}
-            ListFooterComponent={<View style={{ height: 20 }} />}
-          />
-        </View>
-      </ScrollView>
+              <Text style={stylesNhatKy.contentPost}>{item.content}</Text>
+              <Image
+                style={stylesNhatKy.imagePost}
+                source={require('./assets/baiDang1.png')}
+              />
+              <View
+                style={{
+                  flexDirection: 'row',
+                  justifyContent: 'flex-start',
+                  marginTop: 10,
+                }}>
+                <Image
+                  style={stylesNhatKy.image2}
+                  source={require('./assets/nhatKy8.png')}
+                />
+                <Text>{item.like}</Text>
+                <Image
+                  style={stylesNhatKy.image2}
+                  source={require('./assets/nhatKy9.png')}
+                />
+                <Text>{item.comment}</Text>
+              </View>
+            </View>
+          )}
+          keyExtractor={(item) => '${item.id}'}
+          ListFooterComponent={<View style={{ height: 20 }} />}
+        />
+      </View>
     </View>
   );
 };
