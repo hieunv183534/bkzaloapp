@@ -20,16 +20,64 @@ import { Feather } from 'react-native-vector-icons/Feather';
 import DocumentPicker from 'react-native-document-picker';
 import ImagePicker from 'react-native-image-crop-picker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import PostApi from '../src/api/PostApi';
+import FileApi from '../src/api/FileApi';
 
 const NhatKy = ({ navigation }) => {
   const [singleFile, setSingleFile] = useState(null);
   const [token, onToken] = useState('');
+  const [listPosts, onListPosts] = useState([]);
 
   useEffect(() => {
-    AsyncStorage.getItem('token').then((data) => {
+    AsyncStorage.getItem('token').then(async (data) => {
       onToken(data);
+      const postApi = new PostApi(data);
+      const fileApi = new FileApi(data);
+      await postApi
+        .getListPost(0, 10)
+        .then(async (res) => {
+          console.log('postApi: ', res);
+          //res.data.data.conversations = [] => conversationId/ lastMessage.content * createdAt/ partner.accountId *avatarUrl *userName
+          if (res.data.code === 1000) {
+            let posts = [];
+            const conv = res.data.data;
+            for (let i in conv) {
+              const img = conv[i].allMediaUrl;
+              let blob;
+              let base64data;
+              await fileApi.getFile(img).then((rest) => blob = rest.data);
+              const fileReaderInstance = new FileReader();
+              fileReaderInstance.readAsDataURL(blob);
+              fileReaderInstance.onload = () => {
+                base64data = fileReaderInstance.result;
+                console.log(base64data);
+              }
+              const curr = {
+                id: conv[i].postId,
+                name: conv[i].author.userName,
+                image: './assets/avatar1.png',
+                // imageUri: "data:image/png;base64," + blob,
+                imageUri: base64data,
+                time: conv[i].createdAt,
+                content: conv[i].described,
+                like: conv[i].like,
+                comment: conv[i].comment,
+              };
+              posts.push(curr)
+            }
+            console.log("posts: ", posts)
+            onListPosts(posts);
+          }
+        })
+        .catch((error) => {
+          console.error(error);
+        });
     });
   }, []);
+
+  // useEffect(() => {
+  //   console.log("token: ", token)
+  // }, []);
   const selectFile = async () => {
     // Opening Document Picker to select one file
 
@@ -244,7 +292,7 @@ const NhatKy = ({ navigation }) => {
 
       <View style={{ backgroundColor: 'white' }}>
         <FlatList
-          data={dataNhatKy}
+          data={listPosts}
           renderItem={({ item }) => (
             <View>
               <View
@@ -288,7 +336,8 @@ const NhatKy = ({ navigation }) => {
               <Text style={stylesNhatKy.contentPost}>{item.content}</Text>
               <Image
                 style={stylesNhatKy.imagePost}
-                source={require('./assets/baiDang1.png')}
+                // source={require('./assets/baiDang1.png')}
+                source={{ uri: item.imageUri }}
               />
               <View
                 style={{
@@ -309,7 +358,7 @@ const NhatKy = ({ navigation }) => {
               </View>
             </View>
           )}
-          keyExtractor={(item) => '${item.id}'}
+          keyExtractor={(item) => `${item.id}`}
           ListFooterComponent={<View style={{ height: 20 }} />}
         />
       </View>

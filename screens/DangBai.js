@@ -26,6 +26,7 @@ import {
   StatusWrapper,
 } from '../styles/AddPost';
 import FileApi from '../src/api/FileApi';
+import PostApi from '../src/api/PostApi';
 
 const DangBai = ({ navigation, route }) => {
   const [imgInfo, onImgInfo] = useState(null);
@@ -54,8 +55,14 @@ const DangBai = ({ navigation, route }) => {
     arrImg.push(imgInfo);
     console.log('arrImg: ', arrImg);
     const fileApi = new FileApi(token);
+    const postApi = new PostApi(token);
     fileApi.uploadFiles(arrImg).then((res) => {
       console.log('res: ', res);
+      // fileApi.getFile(res.data[0]).then((rest) => console.log("rest:", rest))
+      postApi.addPost(res.data, text).then((res) => {
+        console.log('resDANG: ', res);
+      });
+      navigation.navigate('NhatKy')
       console.log('AAAAAAAAAAAAAAA');
     });
     console.log('Upload imgInfo store!');

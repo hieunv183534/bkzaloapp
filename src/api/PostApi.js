@@ -1,7 +1,16 @@
-import BaseApiConfig, {headers} from './BaseApiConfig.js';
+import BaseApiConfig, { headers } from './BaseApiConfig.js';
 
 class PostApi {
-  constructor() {}
+  constructor(token) {
+    this.token = token;
+
+    this.headers = {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: this.token,
+      },
+    };
+  }
 
   /**
    * đăng 1 bài viết mới
@@ -14,8 +23,8 @@ class PostApi {
    * }
    */
   addPost(mediaUrls, described) {
-    let body = {mediaUrls, described};
-    return BaseApiConfig.post('add_post', body, headers);
+    let body = { mediaUrls, described };
+    return BaseApiConfig.post('add_post', body, this.headers);
   }
 
   /**
@@ -28,7 +37,7 @@ class PostApi {
    * }
    */
   getPost(id) {
-    return BaseApiConfig.get(`get_post/${id}`, headers);
+    return BaseApiConfig.get(`get_post/${id}`, this.headers);
   }
 
   /**
@@ -41,7 +50,7 @@ class PostApi {
    * }
    */
   deletePost(id) {
-    return BaseApiConfig.delete(`delete_post/${id}`, headers);
+    return BaseApiConfig.delete(`delete_post/${id}`, this.headers);
   }
 
   /**
@@ -54,7 +63,7 @@ class PostApi {
    * }
    */
   editPost(post) {
-    return BaseApiConfig.put(`edit_post/${post.postId}`, post, headers);
+    return BaseApiConfig.put(`edit_post/${post.postId}`, post, this.headers);
   }
 
   /**
@@ -63,7 +72,7 @@ class PostApi {
    * @returns
    */
   like(postId) {
-    return BaseApiConfig.post(`like/${postId}`, headers);
+    return BaseApiConfig.post(`like/${postId}`, this.headers);
   }
 
   /**
@@ -75,7 +84,7 @@ class PostApi {
   getListPost(index, count) {
     return BaseApiConfig.get(
       `get_list_post?index=${index}&count=${count}`,
-      headers,
+      this.headers,
     );
   }
 
@@ -85,8 +94,8 @@ class PostApi {
    * @returns
    */
   checkNewItem(lastId) {
-    return BaseApiConfig.post(`check_new_item?lastId=${lastId}`, headers);
+    return BaseApiConfig.post(`check_new_item?lastId=${lastId}`, this.headers);
   }
 }
 
-export default new PostApi();
+export default PostApi;
