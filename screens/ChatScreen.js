@@ -91,6 +91,10 @@ const ChatScreen = (route) => {
           if (messages[i]._id === message.messageId) ex = true;
         }
         const gui = receiveID === message.senderId ? 2 : 1;
+        console.log("gui: ", gui)
+        console.log("receiveID: ", receiveID)
+        console.log("message.senderId: ", message.senderId)
+        console.log("message.receiverId: ", message.receiverId)
         if (!ex && gui === 2) {
           const mess = {
             _id: message.messageId,
