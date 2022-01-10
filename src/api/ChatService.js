@@ -1,9 +1,9 @@
 import Signalr, { HubConnectionBuilder, LogLevel } from '@microsoft/signalr';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-class ChatSerrvice {
+class ChatService {
   constructor(token) {
-    this.chatUrl = 'http://balohieunv.somee.com/chat';
+    this.chatUrl = 'http://hieunv183534-001-site1.gtempurl.com/chat';
     this.token = token;
     this.connection = null;
   }
@@ -12,7 +12,7 @@ class ChatSerrvice {
    * khởi tạo kết nối
    * @returns
    */
-  connection1() {
+  async connection1() {
     console.log('000000000000000000000');
 
     this.connection = new HubConnectionBuilder()
@@ -27,12 +27,7 @@ class ChatSerrvice {
    */
   async start() {
     console.log('111111111111111111111111');
-    return await this.connection.start
-      .then(() => {
-        console.log('Bắt đầu kết nối thành công!');
-        return 'okok';
-      })
-      .catch((err) => console.log(err));
+    return await this.connection.start();
   }
 
   /**
@@ -81,4 +76,4 @@ class ChatSerrvice {
   }
 }
 
-export default ChatSerrvice;
+export default ChatService;

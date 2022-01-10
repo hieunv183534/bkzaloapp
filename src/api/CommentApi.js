@@ -1,7 +1,16 @@
 import BaseApiConfig, { headers } from "./BaseApiConfig.js";
 
- class CommentApi{
-    constructor(){}
+class CommentApi {
+    constructor(token) {
+        this.token = token;
+
+        this.headers = {
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: this.token,
+            },
+        };
+    }
 
     /**
      * lấy các comment của 1 bài viết
@@ -14,8 +23,8 @@ import BaseApiConfig, { headers } from "./BaseApiConfig.js";
      *  -data{ 1 list {commentId,content,createdAt,poster:{accountId,userName,avatarUrl}} }
      * }
      */
-    getComment(postId,index,count){
-        return BaseApiConfig.get(`get_comment?postId=${postId}&index=${index}&count=${count}`,headers);
+    getComment(postId, index, count) {
+        return BaseApiConfig.get(`get_comment?postId=${postId}&index=${index}&count=${count}`, this.headers);
     }
 
     /**
@@ -28,9 +37,9 @@ import BaseApiConfig, { headers } from "./BaseApiConfig.js";
      *  -data{commentId,content,poster:{accountId,userName,avatarUrl} }
      * }
      */
-    setComment(postId,content){
-        let body = {postId,content};
-        return BaseApiConfig.post('set_comment',body,headers);
+    setComment(postId, content) {
+        let body = { postId, content };
+        return BaseApiConfig.post('set_comment', body, this.headers);
     }
 
     /**
@@ -42,8 +51,8 @@ import BaseApiConfig, { headers } from "./BaseApiConfig.js";
      *  -data{}
      * }
      */
-    deleteComment(id){
-        return BaseApiConfig.delete(`delete_comment/${id}`,headers);
+    deleteComment(id) {
+        return BaseApiConfig.delete(`delete_comment/${id}`, this.headers);
     }
 
     /**
@@ -55,9 +64,9 @@ import BaseApiConfig, { headers } from "./BaseApiConfig.js";
      *  -data{}
      * }
      */
-    editComment(comment){
-        return BaseApiConfig.put(`edit_comment/${comment.commentId}`,body,headers);
+    editComment(comment) {
+        return BaseApiConfig.put(`edit_comment/${comment.commentId}`, body, this.headers);
     }
 }
 
-export default new CommentApi();
+export default CommentApi;

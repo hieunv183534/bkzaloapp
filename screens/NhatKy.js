@@ -20,22 +20,113 @@ import { Feather } from 'react-native-vector-icons/Feather';
 import DocumentPicker from 'react-native-document-picker';
 import ImagePicker from 'react-native-image-crop-picker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import PostApi from '../src/api/PostApi';
+import FileApi from '../src/api/FileApi';
 
 const NhatKy = ({ navigation }) => {
   const [singleFile, setSingleFile] = useState(null);
   const [token, onToken] = useState('');
+  const [listPosts, onListPosts] = useState([]);
 
-  useEffect(() => {
-    AsyncStorage.getItem('token').then((data) => {
+  const formatDateTime = (_date) => {
+    if (_date != null) {
+      var date = new Date(_date);
+      var day = date.getDate();
+      day = (day < 10) ? '0' + day : day;
+      var month = date.getMonth() + 1;
+      month = (month < 10) ? '0' + month : month;
+      var year = date.getFullYear();
+
+      var hour = date.getHours();
+      hour = (hour < 10) ? '0' + hour : hour;
+      var minit = date.getMinutes();
+      minit = (minit < 10) ? '0' + minit : minit;
+
+      return hour + ":" + minit + " " + day + '/' + month + '/' + year;
+    }
+    else {
+      return '';
+    }
+  }
+
+  const likeAction = (postId) => {
+    console.log('postId: ', postId);
+    console.log('token: ', token);
+    const postApi = new PostApi(token);
+    postApi
+      .like(postId)
+      .then(async (res) => {
+        console.log('likeApi: ', res);
+        //res.data.data.conversations = [] => conversationId/ lastMessage.content * createdAt/ partner.accountId *avatarUrl *userName
+        if (res.data.code === 1000) {
+          displayNhatKy()
+        }
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  }
+
+  const displayNhatKy = () => {
+    AsyncStorage.getItem('token').then(async (data) => {
       onToken(data);
+      const postApi = new PostApi(data);
+      const fileApi = new FileApi(data);
+      await postApi
+        .getListPost(0, 10)
+        .then(async (res) => {
+          console.log('postApi: ', res);
+          //res.data.data.conversations = [] => conversationId/ lastMessage.content * createdAt/ partner.accountId *avatarUrl *userName
+          if (res.data.code === 1000) {
+            let posts = [];
+            const conv = res.data.data;
+            for (let i in conv) {
+              const img = conv[i].allMediaUrl;
+              let blob;
+              let base64data;
+              await fileApi.getFile(img).then((rest) => blob = rest.data);
+              const fileReaderInstance = new FileReader();
+              fileReaderInstance.readAsDataURL(blob);
+              fileReaderInstance.onload = () => {
+                base64data = fileReaderInstance.result;
+                base64data = base64data.replace('application/octet-stream', 'image/jpeg')
+                const curr = {
+                  id: conv[i].postId,
+                  name: conv[i].author.userName,
+                  image: './assets/avatar1.png',
+                  // imageUri: "data:image/png;base64," + blob,
+                  imageUri: base64data,
+                  time: conv[i].createdAt,
+                  content: conv[i].described,
+                  like: conv[i].like,
+                  comment: conv[i].comment,
+                  isLike: conv[i].isLiked,
+                };
+                posts.push(curr)
+              }
+            }
+            console.log("posts: ", posts)
+            onListPosts(posts);
+          }
+        })
+        .catch((error) => {
+          console.error(error);
+        });
     });
+  }
+  useEffect(() => {
+    displayNhatKy();
   }, []);
+
+  // useEffect(() => {
+  //   console.log("token: ", token)
+  // }, []);
   const selectFile = async () => {
     // Opening Document Picker to select one file
 
     ImagePicker.openPicker({
-      width: 1200,
-      height: 780,
+      width: 200,
+      height: 150,
       cropping: true,
     }).then((image) => {
       console.log(image);
@@ -45,98 +136,6 @@ const NhatKy = ({ navigation }) => {
     });
   };
 
-  const dataNhatKy = [
-    {
-      id: 1,
-      name: 'Devin',
-      image: './assets/avatar1.png',
-      time: 'Hôm qua lúc 17:40',
-      content: 'Đây là bài đăng 1',
-      like: 41,
-      comment: 12,
-    },
-    {
-      id: 2,
-      name: 'Dan',
-      image: './assets/avatar2.png',
-      time: 'Hôm qua lúc 17:00',
-      content: 'Đây là bài đăng 2',
-      like: 31,
-      comment: 20,
-    },
-    {
-      id: 3,
-      name: 'Dominic',
-      image: './assets/avatar2.png',
-      time: 'Hôm qua lúc 15:40',
-      content: 'Đây là bài đăng 13',
-      like: 71,
-      comment: 32,
-    },
-    {
-      id: 4,
-      name: 'Jackson',
-      image: './assets/avatar1.png',
-      time: 'Hôm qua lúc 14:40',
-      content: 'Đây là bài đăng 14',
-      like: 16,
-      comment: 2,
-    },
-    {
-      id: 5,
-      name: 'James',
-      image: './assets/avatar1.png',
-      time: 'Hôm qua lúc 13:40',
-      content: 'Đây là bài đăng 15',
-      like: 15,
-      comment: 12,
-    },
-    {
-      id: 6,
-      name: 'Joel',
-      image: './assets/avatar2.png',
-      time: 'Hôm qua lúc 12:40',
-      content: 'Đây là bài đăng 16',
-      like: 12,
-      comment: 2,
-    },
-    {
-      id: 7,
-      name: 'John',
-      image: './assets/avatar1.png',
-      time: 'Hôm qua lúc 11:40',
-      content: 'Đây là bài đăng 17',
-      like: 11,
-      comment: 2,
-    },
-    {
-      id: 8,
-      name: 'Jillian',
-      image: './assets/avatar2.png',
-      time: 'Hôm qua lúc 10:40',
-      content: 'Đây là bài đăng 18',
-      like: 12,
-      comment: 2,
-    },
-    {
-      id: 9,
-      name: 'Jimmy',
-      image: './assets/avatar1.png',
-      time: 'Hôm qua lúc 9:40',
-      content: 'Đây là bài đăng 19',
-      like: 13,
-      comment: 2,
-    },
-    {
-      id: 10,
-      name: 'Julie',
-      image: './assets/avatar1.png',
-      time: 'Hôm qua lúc 6:40',
-      content: 'Đây là bài đăng 11',
-      like: 14,
-      comment: 12,
-    },
-  ];
   return (
     <View style={{ backgroundColor: 'white' }}>
       <View>
@@ -158,13 +157,13 @@ const NhatKy = ({ navigation }) => {
             />
             <ScrollView>
               <View style={{ flexDirection: 'row', marginTop: 0 }}>
-                <TouchableOpacity>
+                <TouchableOpacity onPress={displayNhatKy}>
                   <Image
                     style={stylesSearchBar.image}
                     source={require('./assets/nhatKy2.png')}
                   />
                 </TouchableOpacity>
-                <TouchableOpacity>
+                <TouchableOpacity onPress={() => navigation.navigate('ThongBao')}>
                   <Image
                     style={stylesSearchBar.image}
                     source={require('./assets/nhatKy3.png')}
@@ -244,7 +243,7 @@ const NhatKy = ({ navigation }) => {
 
       <View style={{ backgroundColor: 'white' }}>
         <FlatList
-          data={dataNhatKy}
+          data={listPosts}
           renderItem={({ item }) => (
             <View>
               <View
@@ -277,7 +276,7 @@ const NhatKy = ({ navigation }) => {
                   {/* <TouchableOpacity activeOpacity={0.2} onPress={() =>{navigation.navigate('NhanTin2', {itemId: item.id, itemName: item.name,});}}> */}
                   <View>
                     <Text style={stylesNhatKy.namePost}>{item.name}</Text>
-                    <Text style={stylesNhatKy.timePost}>{item.time}</Text>
+                    <Text style={stylesNhatKy.timePost}>{formatDateTime(item.time)}</Text>
                   </View>
                 </View>
                 <Image
@@ -288,7 +287,8 @@ const NhatKy = ({ navigation }) => {
               <Text style={stylesNhatKy.contentPost}>{item.content}</Text>
               <Image
                 style={stylesNhatKy.imagePost}
-                source={require('./assets/baiDang1.png')}
+                // source={require('./assets/baiDang1.png')}
+                source={{ uri: item.imageUri }}
               />
               <View
                 style={{
@@ -296,21 +296,25 @@ const NhatKy = ({ navigation }) => {
                   justifyContent: 'flex-start',
                   marginTop: 10,
                 }}>
-                <Image
-                  style={stylesNhatKy.image2}
-                  source={require('./assets/nhatKy8.png')}
-                />
+                <TouchableOpacity onPress={() => { likeAction(item.id) }}>
+                  <Image
+                    style={stylesNhatKy.image2}
+                    source={item.isLike ? require('./assets/nhatKy8red.png') : require('./assets/nhatKy8.png')}
+                  />
+                </TouchableOpacity>
                 <Text>{item.like}</Text>
-                <Image
-                  style={stylesNhatKy.image2}
-                  source={require('./assets/nhatKy9.png')}
-                />
+                <TouchableOpacity onPress={() => { navigation.navigate('Nhật ký', { item: item, token: token }); }}>
+                  <Image
+                    style={stylesNhatKy.image2}
+                    source={require('./assets/nhatKy9.png')}
+                  />
+                </TouchableOpacity>
                 <Text>{item.comment}</Text>
               </View>
             </View>
           )}
-          keyExtractor={(item) => '${item.id}'}
-          ListFooterComponent={<View style={{ height: 20 }} />}
+          keyExtractor={(item) => `${item.id}`}
+          ListFooterComponent={<View style={{ height: 350 }} />}
         />
       </View>
     </View>

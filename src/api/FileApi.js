@@ -1,8 +1,15 @@
-import BaseApiConfig, {formHeaders, headers} from './BaseApiConfig.js';
+import BaseApiConfig, { formHeaders, headers } from './BaseApiConfig.js';
 
 class FileApi {
   constructor(token) {
     this.token = token;
+
+    this.headers = {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: this.token,
+      },
+    };
   }
 
   /**
@@ -15,17 +22,17 @@ class FileApi {
    * }
    */
   uploadFiles(files) {
+    console.log(files);
     let formData = new FormData();
     files.forEach((file) => {
-      formData.append('file', file);
+      formData.append('file', {
+        uri: file,
+        type: 'image/jpg',
+        name: 'image.jpg',
+      });
     });
     console.log('formData: ', formData);
-    return BaseApiConfig.post('uploadFiles', formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-        Authorization: this.token,
-      },
-    });
+    return BaseApiConfig.post('uploadFiles', formData, this.headers);
   }
 
   /**
@@ -38,7 +45,7 @@ class FileApi {
    * }
    */
   deleteFiles(fileNames) {
-    return BaseApiConfig.post('deleteFiles', fileNames, headers);
+    return BaseApiConfig.post('deleteFiles', fileNames, this.headers);
   }
 
   /**
@@ -47,7 +54,13 @@ class FileApi {
    * @returns
    */
   getFile(fileName) {
-    return BaseApiConfig.get(`getFile/${fileName}`, headers);
+    return BaseApiConfig.get(`getFile/${fileName}`, {
+      responseType: 'blob',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: this.token,
+      }
+    });
   }
 }
 

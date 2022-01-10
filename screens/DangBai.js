@@ -1,4 +1,4 @@
-import React, {useContext, useState, useEffect} from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import {
   Button,
   View,
@@ -11,12 +11,14 @@ import {
   ScrollView,
   FlatList,
   ImageBackground,
+  Alert,
+  ToastAndroid,
 } from 'react-native';
 import LogInImage from './assets/logIn.png';
 import AvatarImage1 from './assets/avatar1.png';
 import LogInImage3 from './assets/logIn3.png';
-import {color, onChange} from 'react-native-reanimated';
-import {Feather} from 'react-native-vector-icons/Feather';
+import { color, onChange } from 'react-native-reanimated';
+import { Feather } from 'react-native-vector-icons/Feather';
 import {
   InputField,
   InputWrapper,
@@ -26,8 +28,9 @@ import {
   StatusWrapper,
 } from '../styles/AddPost';
 import FileApi from '../src/api/FileApi';
+import PostApi from '../src/api/PostApi';
 
-const DangBai = ({navigation, route}) => {
+const DangBai = ({ navigation, route }) => {
   const [imgInfo, onImgInfo] = useState(null);
   const [text, onChangeText] = useState('');
   const [userName, onUserName] = useState('');
@@ -42,7 +45,7 @@ const DangBai = ({navigation, route}) => {
   const [isConnected, setConnected] = useState(false);
 
   useEffect(() => {
-    const {imgInfo, token} = route.params;
+    const { imgInfo, token } = route.params;
     onImgInfo(imgInfo);
     onToken(token);
   }, []);
@@ -51,18 +54,57 @@ const DangBai = ({navigation, route}) => {
     console.log('text: ', text);
     console.log('imgInfo: ', imgInfo);
     let arrImg = [];
-    arrImg.push('dgdsfbdfsb');
+    arrImg.push(imgInfo);
     console.log('arrImg: ', arrImg);
     const fileApi = new FileApi(token);
+    const postApi = new PostApi(token);
     fileApi.uploadFiles(arrImg).then((res) => {
       console.log('res: ', res);
+      // fileApi.getFile(res.data[0]).then((rest) => console.log("rest:", rest))
+      postApi.addPost(res.data, text).then((res) => {
+        console.log('resDANG: ', res);
+      });
+      navigation.navigate('NhatKy')
       console.log('AAAAAAAAAAAAAAA');
     });
     console.log('Upload imgInfo store!');
   };
 
+
+    // const DangBaiAlert = () =>
+    //   Alert.alert(
+    //     "Xác Nhận Đăng Bài",
+    //     "Bạn có muốn đăng bài",
+    //     [
+    //       {
+    //         text: "Hủy bỏ",
+    //         onPress: () => console.log("Cancel Pressed"),
+    //         style: "cancel"
+    //       },
+    //       { text: "Đồng Ý", onPress: () => console.log("OK Pressed") }
+    //     ]
+    //   );
+
+    const showToastWithGravity = () => {
+      ToastAndroid.showWithGravity(
+        "All Your Base Are Belong To Us",
+        ToastAndroid.SHORT,
+        ToastAndroid.CENTER
+      );
+    };
+
+    const showToastWithGravityAndOffset = () => {
+      ToastAndroid.showWithGravityAndOffset(
+        "Đăng bài thành công",
+        ToastAndroid.LONG,
+        ToastAndroid.BOTTOM,
+        25,
+        50
+      );
+    };
+
   return (
-    <View style={{backgroundColor: 'white'}}>
+    <View style={{ backgroundColor: 'white' }}>
       <ScrollView>
         <View>
           <TextInput
@@ -84,7 +126,7 @@ const DangBai = ({navigation, route}) => {
             onChangeText={(text) => onChangeText(text)}
           />
 
-          {imgInfo != null ? <AddImage source={{uri: imgInfo}} /> : null}
+          {imgInfo != null ? <AddImage source={{ uri: imgInfo }} /> : null}
           {/* {imgInfo !== null && imgInfo[0].uri !== undefined ? (
             <Image
               style={stylesNhatKy.loadPost}
@@ -104,7 +146,7 @@ const DangBai = ({navigation, route}) => {
             }}>
             <TouchableOpacity>
               <View
-                style={{flexDirection: 'row', justifyContent: 'flex-start'}}>
+                style={{ flexDirection: 'row', justifyContent: 'flex-start' }}>
                 <Image
                   style={stylesNhatKy.image2}
                   source={require('./assets/dangBai1.png')}
@@ -114,7 +156,7 @@ const DangBai = ({navigation, route}) => {
             </TouchableOpacity>
             <TouchableOpacity>
               <View
-                style={{flexDirection: 'row', justifyContent: 'flex-start'}}>
+                style={{ flexDirection: 'row', justifyContent: 'flex-start' }}>
                 <Image
                   style={stylesNhatKy.image2}
                   source={require('./assets/dangBai2.png')}
@@ -124,7 +166,7 @@ const DangBai = ({navigation, route}) => {
             </TouchableOpacity>
             <TouchableOpacity>
               <View
-                style={{flexDirection: 'row', justifyContent: 'flex-start'}}>
+                style={{ flexDirection: 'row', justifyContent: 'flex-start' }}>
                 <Image
                   style={stylesNhatKy.image2}
                   source={require('./assets/dangBai3.png')}
@@ -151,7 +193,7 @@ const DangBai = ({navigation, route}) => {
 
             <TouchableOpacity>
               <View
-                style={{flexDirection: 'row', justifyContent: 'flex-start'}}>
+                style={{ flexDirection: 'row', justifyContent: 'flex-start' }}>
                 <Image
                   style={stylesNhatKy.image2}
                   source={require('./assets/dangBai5.png')}
@@ -174,7 +216,15 @@ const DangBai = ({navigation, route}) => {
             </TouchableOpacity>
           </View>
         </View>
+
       </ScrollView>
+      <TouchableOpacity onPress={() => showToastWithGravityAndOffset()}>
+          <Text style={{marginLeft:300, marginRight:15, marginTop:15,marginBottom:15, backgroundColor:'#1e90ff', padding: 10, textAlign:'center', color:'white'}}>
+              Đăng bài
+          </Text>
+        </TouchableOpacity>
+
+        {/* <Button style={stylesNhatKy.button} title={"Đăng Bài"} onPress={() => showToastWithGravityAndOffset()} /> */}
     </View>
   );
 };
