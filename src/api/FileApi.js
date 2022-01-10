@@ -31,7 +31,6 @@ class FileApi {
         name: 'image.jpg',
       });
     });
-    console.log('formData: ', formData);
     return BaseApiConfig.post('uploadFiles', formData, this.headers);
   }
 

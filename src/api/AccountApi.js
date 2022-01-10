@@ -83,9 +83,6 @@ class AccountApi {
    * }
    */
   getAccountByPhoneNumber(phoneNumber) {
-    console.log('this.headers', this.headers);
-    console.log('this.token', this.token);
-    console.log('phoneNumber', phoneNumber);
     return BaseApiConfig.get(
       `getAccountByPhoneNumber/${phoneNumber}`,
       this.headers,

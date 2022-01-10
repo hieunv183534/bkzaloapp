@@ -33,9 +33,20 @@ const LoginScreen2 = ({ navigation }) => {
       await accountApi
         .login(phone, password)
         .then((res) => {
-          console.log(res.data);
+          console.log('aaaaaa: ', res.data);
           if (res.data.code === 1000) {
             AsyncStorage.setItem('token', res.data.data.token);
+            const accountApi1 = new AccountApi(res.data.data.token);
+
+            accountApi1.getAccountByPhoneNumber(phone).then((res) => {
+              console.log('bbbbbb: ', res.data);
+              if (res.data.code === 1000) {
+                AsyncStorage.setItem('accountId', res.data.data.accountId);
+                AsyncStorage.setItem('userName', res.data.data.userName);
+                AsyncStorage.setItem('avatarUrl', res.data.data.avatarUrl);
+                AsyncStorage.setItem('phoneNumber', res.data.data.phoneNumber);
+              }
+            })
             navigation.navigate('LoginScreen3');
           }
         })

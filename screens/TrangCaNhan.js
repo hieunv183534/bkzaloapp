@@ -1,4 +1,4 @@
-import React, {useContext, useState} from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import {
   Button,
   View,
@@ -15,10 +15,85 @@ import {
 import LogInImage from './assets/logIn.png';
 import AvatarImage1 from './assets/avatar1.png';
 import LogInImage3 from './assets/logIn3.png';
-import {color, onChange} from 'react-native-reanimated';
-import {Feather} from 'react-native-vector-icons/Feather';
+import { color, onChange } from 'react-native-reanimated';
+import { Feather } from 'react-native-vector-icons/Feather';
+import ImagePicker from 'react-native-image-crop-picker';
+import PostApi from '../src/api/PostApi';
+import FileApi from '../src/api/FileApi';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const TrangCaNhan = ({navigation}) => {
+const TrangCaNhan = ({ navigation, route }) => {
+  const [singleFile, setSingleFile] = useState(null);
+  const [imgInfo, onImgInfo] = useState(null);
+  const [token, onToken] = useState('');
+  const [userName, onUserName] = useState('');
+  const [avatarUrl, onAvatarUrl] = useState(null);
+
+
+  useEffect(() => {
+    const { avatarUrl, token, userName } = route.params;
+    console.log("avatarUrl: ", avatarUrl);
+    onToken(token);
+    onUserName(userName)
+    const postApi = new PostApi(token);
+    if (avatarUrl !== null) {
+      onAvatarUrl(avatarUrl)
+      getImage(avatarUrl, token)
+    }
+  }, []);
+
+  const getImage = (avatarUrl, token) => {
+    console.log("avatarUrl ", avatarUrl);
+    console.log("token ", token);
+
+    const fileApi = new FileApi(token);
+    fileApi.getFile(avatarUrl).then((rest) => {
+      let blob;
+      let base64data;
+      blob = rest.data;
+      const fileReaderInstance = new FileReader();
+      console.log("token: ", token);
+      console.log("blob: ", blob);
+
+      fileReaderInstance.readAsDataURL(blob);
+      fileReaderInstance.onload = () => {
+        base64data = fileReaderInstance.result;
+        base64data = base64data.replace('application/octet-stream', 'image/jpeg')
+        console.log("qqqqqqqqqqqqqqq ", base64data);
+        onImgInfo(base64data);
+      }
+    });
+
+  }
+  const selectFile = () => {
+    // Opening Document Picker to select one file
+    ImagePicker.openPicker({
+      width: 200,
+      height: 150,
+      cropping: true,
+      cropperCircleOverlay: true
+    }).then((image) => {
+      // console.log(image);
+      const imageUri = Platform.OS === 'ios' ? image.sourceURL : image.path;
+      console.log("AAAAAAAAAAAAAAAAAAAAAAA");
+      console.log("token: ", token);
+      let arrImg = [];
+      arrImg.push(imageUri);
+      const fileApi = new FileApi(token);
+      fileApi.uploadFiles(arrImg).then((res) => {
+        console.log('fileApi: ', res.data);
+        if (res.data !== null && res.data[0] !== '') {
+          AsyncStorage.setItem('avatarUrl', res.data[0]);
+
+          console.log('fileApi: ', res.data[0]);
+
+          getImage(res.data[0], token)
+        }
+      })
+      // onImgInfo(imageUri);
+      // navigation.navigate('DangBai', { imgInfo: imageUri, token: token });
+    });
+  };
   const dataTrangCaNhan = [
     {
       id: 1,
@@ -29,99 +104,22 @@ const TrangCaNhan = ({navigation}) => {
       like: 41,
       comment: 12,
     },
-    {
-      id: 2,
-      name: 'Dan',
-      image: './assets/avatar2.png',
-      time: '24 tháng 12',
-      content: 'Đây là bài đăng 2',
-      like: 31,
-      comment: 20,
-    },
-    {
-      id: 3,
-      name: 'Dominic',
-      image: './assets/avatar2.png',
-      time: '23 tháng 12',
-      content: 'Đây là bài đăng 13',
-      like: 71,
-      comment: 32,
-    },
-    {
-      id: 4,
-      name: 'Jackson',
-      image: './assets/avatar1.png',
-      time: '22 tháng 12',
-      content: 'Đây là bài đăng 14',
-      like: 16,
-      comment: 2,
-    },
-    {
-      id: 5,
-      name: 'James',
-      image: './assets/avatar1.png',
-      time: '21 tháng 12',
-      content: 'Đây là bài đăng 15',
-      like: 15,
-      comment: 12,
-    },
-    {
-      id: 6,
-      name: 'Joel',
-      image: './assets/avatar2.png',
-      time: '20 tháng 12',
-      content: 'Đây là bài đăng 16',
-      like: 12,
-      comment: 2,
-    },
-    {
-      id: 7,
-      name: 'John',
-      image: './assets/avatar1.png',
-      time: '14 tháng 12',
-      content: 'Đây là bài đăng 17',
-      like: 11,
-      comment: 2,
-    },
-    {
-      id: 8,
-      name: 'Jillian',
-      image: './assets/avatar2.png',
-      time: '11 tháng 12',
-      content: 'Đây là bài đăng 18',
-      like: 12,
-      comment: 2,
-    },
-    {
-      id: 9,
-      name: 'Jimmy',
-      image: './assets/avatar1.png',
-      time: '2 tháng 12',
-      content: 'Đây là bài đăng 19',
-      like: 13,
-      comment: 2,
-    },
-    {
-      id: 10,
-      name: 'Julie',
-      image: './assets/avatar1.png',
-      time: '1 tháng 12',
-      content: 'Đây là bài đăng 11',
-      like: 14,
-      comment: 12,
-    },
   ];
   return (
-    <View style={{flex: 1}}>
+    <View style={{ flex: 1 }}>
       <ScrollView>
         <ImageBackground
           source={require('./assets/trangCaNhan1.png')}
           resizeMode="cover"
-          style={{width: 400}}>
-          <Image
-            style={{height: 60, width: 60, marginTop: 170, marginLeft: 175}}
-            source={require('./assets/avatar1.png')}
-          />
+          style={{ width: 400 }}>
+          <TouchableOpacity onPress={selectFile}>
+
+            <Image
+              style={{ height: 60, width: 60, borderRadius: 60 / 2, marginTop: 170, marginLeft: 175 }}
+              // source={require('./assets/avatar1.png')}
+              source={imgInfo !== null ? { uri: imgInfo } : require('./assets/zalologo.png')}
+            />
+          </TouchableOpacity>
         </ImageBackground>
         <Text
           style={{
@@ -130,13 +128,13 @@ const TrangCaNhan = ({navigation}) => {
             textAlign: 'center',
             marginTop: 5,
           }}>
-          Jimmy
+          {userName}
         </Text>
-        <Text style={{color: '#1e90ff', textAlign: 'center'}}>
+        <Text style={{ color: '#1e90ff', textAlign: 'center' }}>
           Thêm giới thiệu bản thân
         </Text>
 
-        <View style={{marginLeft: 15, marginRight: 10}}>
+        <View style={{ marginLeft: 15, marginRight: 10 }}>
           <View
             style={{
               flexDirection: 'row',
@@ -149,81 +147,12 @@ const TrangCaNhan = ({navigation}) => {
               <Text>Bạn đang nghĩ gì</Text>
             </TouchableOpacity>
             <Image
-              style={{height: 20, width: 20, marginRight: 10}}
+              style={{ height: 20, width: 20, marginRight: 10 }}
               source={require('./assets/trangCaNhan2.png')}
             />
           </View>
 
-          <FlatList
-            data={dataTrangCaNhan}
-            renderItem={({item}) => (
-              <View>
-                <View
-                  style={{flexDirection: 'row', justifyContent: 'flex-start'}}>
-                  <Text style={stylesTrangCaNhan.timePost}>{item.time}</Text>
-                  <Text></Text>
-                </View>
-                <View style={{backgroundColor: 'white'}}>
-                  <View
-                    style={{
-                      backgroundColor: '#f5f5f5',
-                      height: 4,
-                      width: 500,
-                    }}></View>
-                  {/* <TouchableOpacity activeOpacity={0.2} onPress={() =>{navigation.navigate('NhanTin2', {itemId: item.id, itemName: item.name,});}}> */}
-                  <Text style={stylesTrangCaNhan.contentPost}>
-                    {item.content}
-                  </Text>
-                  <Image
-                    style={stylesTrangCaNhan.image2}
-                    source={require('./assets/baiDang1.png')}
-                  />
 
-                  <View
-                    style={{
-                      flexDirection: 'row',
-                      justifyContent: 'space-between',
-                      marginTop: 10,
-                    }}>
-                    <View
-                      style={{
-                        flexDirection: 'row',
-                        justifyContent: 'flex-start',
-                        marginTop: 10,
-                      }}>
-                      <Image
-                        style={stylesTrangCaNhan.image1}
-                        source={require('./assets/nhatKy8.png')}
-                      />
-                      <Text>{item.like}</Text>
-                      <Image
-                        style={stylesTrangCaNhan.image1}
-                        source={require('./assets/nhatKy9.png')}
-                      />
-                      <Text>{item.comment}</Text>
-                    </View>
-                    <View
-                      style={{
-                        flexDirection: 'row',
-                        justifyContent: 'flex-start',
-                        marginTop: 10,
-                      }}>
-                      <Image
-                        style={stylesTrangCaNhan.image1}
-                        source={require('./assets/trangCaNhan3.png')}
-                      />
-                      <Image
-                        style={stylesTrangCaNhan.image1}
-                        source={require('./assets/trangCaNhan4.png')}
-                      />
-                    </View>
-                  </View>
-                </View>
-              </View>
-            )}
-            keyExtractor={(item) => '${item.id}'}
-            ListFooterComponent={<View style={{height: 20}} />}
-          />
         </View>
         <TouchableOpacity onPress={() => navigation.navigate('DangBai')}>
           <Text

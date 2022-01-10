@@ -59,7 +59,8 @@ const DangBai = ({ navigation, route }) => {
     const fileApi = new FileApi(token);
     const postApi = new PostApi(token);
     fileApi.uploadFiles(arrImg).then((res) => {
-      console.log('res: ', res);
+      // console.log('res: ', res);
+      console.log('fileApi: ', res.data);
       // fileApi.getFile(res.data[0]).then((rest) => console.log("rest:", rest))
       postApi.addPost(res.data, text).then((res) => {
         console.log('resDANG: ', res);
@@ -71,37 +72,37 @@ const DangBai = ({ navigation, route }) => {
   };
 
 
-    // const DangBaiAlert = () =>
-    //   Alert.alert(
-    //     "Xác Nhận Đăng Bài",
-    //     "Bạn có muốn đăng bài",
-    //     [
-    //       {
-    //         text: "Hủy bỏ",
-    //         onPress: () => console.log("Cancel Pressed"),
-    //         style: "cancel"
-    //       },
-    //       { text: "Đồng Ý", onPress: () => console.log("OK Pressed") }
-    //     ]
-    //   );
+  // const DangBaiAlert = () =>
+  //   Alert.alert(
+  //     "Xác Nhận Đăng Bài",
+  //     "Bạn có muốn đăng bài",
+  //     [
+  //       {
+  //         text: "Hủy bỏ",
+  //         onPress: () => console.log("Cancel Pressed"),
+  //         style: "cancel"
+  //       },
+  //       { text: "Đồng Ý", onPress: () => console.log("OK Pressed") }
+  //     ]
+  //   );
 
-    const showToastWithGravity = () => {
-      ToastAndroid.showWithGravity(
-        "All Your Base Are Belong To Us",
-        ToastAndroid.SHORT,
-        ToastAndroid.CENTER
-      );
-    };
+  const showToastWithGravity = () => {
+    ToastAndroid.showWithGravity(
+      "All Your Base Are Belong To Us",
+      ToastAndroid.SHORT,
+      ToastAndroid.CENTER
+    );
+  };
 
-    const showToastWithGravityAndOffset = () => {
-      ToastAndroid.showWithGravityAndOffset(
-        "Đăng bài thành công",
-        ToastAndroid.LONG,
-        ToastAndroid.BOTTOM,
-        25,
-        50
-      );
-    };
+  const showToastWithGravityAndOffset = () => {
+    ToastAndroid.showWithGravityAndOffset(
+      "Đăng bài thành công",
+      ToastAndroid.LONG,
+      ToastAndroid.BOTTOM,
+      25,
+      50
+    );
+  };
 
   return (
     <View style={{ backgroundColor: 'white' }}>
@@ -219,12 +220,12 @@ const DangBai = ({ navigation, route }) => {
 
       </ScrollView>
       <TouchableOpacity onPress={() => showToastWithGravityAndOffset()}>
-          <Text style={{marginLeft:300, marginRight:15, marginTop:15,marginBottom:15, backgroundColor:'#1e90ff', padding: 10, textAlign:'center', color:'white'}}>
-              Đăng bài
+        <Text style={{ marginLeft: 300, marginRight: 15, marginTop: 15, marginBottom: 15, backgroundColor: '#1e90ff', padding: 10, textAlign: 'center', color: 'white' }}>
+          Đăng bài
           </Text>
-        </TouchableOpacity>
+      </TouchableOpacity>
 
-        {/* <Button style={stylesNhatKy.button} title={"Đăng Bài"} onPress={() => showToastWithGravityAndOffset()} /> */}
+      {/* <Button style={stylesNhatKy.button} title={"Đăng Bài"} onPress={() => showToastWithGravityAndOffset()} /> */}
     </View>
   );
 };

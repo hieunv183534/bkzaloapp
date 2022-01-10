@@ -22,11 +22,12 @@ import ImagePicker from 'react-native-image-crop-picker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import PostApi from '../src/api/PostApi';
 import FileApi from '../src/api/FileApi';
-
+import { useIsFocused } from "@react-navigation/native";
 const NhatKy = ({ navigation }) => {
   const [singleFile, setSingleFile] = useState(null);
   const [token, onToken] = useState('');
   const [listPosts, onListPosts] = useState([]);
+  const isFocused = useIsFocused();
 
   const formatDateTime = (_date) => {
     if (_date != null) {
@@ -116,7 +117,7 @@ const NhatKy = ({ navigation }) => {
   }
   useEffect(() => {
     displayNhatKy();
-  }, []);
+  }, [isFocused]);
 
   // useEffect(() => {
   //   console.log("token: ", token)

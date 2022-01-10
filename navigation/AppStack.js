@@ -47,6 +47,11 @@ const Personal = ({ navigation }) => (
       component={LoginScreen}
       options={{ headerShown: false }}
     />
+    <Stack.Screen
+      name="TrangCaNhan"
+      component={TrangCaNhan}
+      options={{ headerShown: false }}
+    />
   </Stack.Navigator>
 );
 

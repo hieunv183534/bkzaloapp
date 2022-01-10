@@ -1,4 +1,4 @@
-import React, {useContext, useState} from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import {
   Button,
   View,
@@ -15,10 +15,37 @@ import {
 import LogInImage from './assets/logIn.png';
 import AvatarImage1 from './assets/avatar1.png';
 import LogInImage3 from './assets/logIn3.png';
-import {color, onChange} from 'react-native-reanimated';
-import {Feather} from 'react-native-vector-icons/Feather';
+import { color, onChange } from 'react-native-reanimated';
+import { Feather } from 'react-native-vector-icons/Feather';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useIsFocused } from "@react-navigation/native";
 
-const CaNhan = ({navigation}) => {
+
+const CaNhan = ({ navigation }) => {
+  const [token, onToken] = useState('');
+  const [userName, onUserName] = useState('');
+  const [avatarUrl, onAvatarUrl] = useState('');
+  const isFocused = useIsFocused();
+  useEffect(() => {
+
+    getAsyn();
+  }, [isFocused]);
+
+  const getAsyn = () => {
+    AsyncStorage.getItem('token').then((data) => {
+      console.log("token: ", data);
+      onToken(data);
+    });
+    AsyncStorage.getItem('avatarUrl').then((data) => {
+      onAvatarUrl(data);
+      console.log("avatarUrl: ", data);
+    });
+    AsyncStorage.getItem('userName').then((data) => {
+      onUserName(data);
+      console.log("userName: ", data);
+    });
+  }
+
   return (
     <View style={{}}>
       <View>
@@ -38,7 +65,7 @@ const CaNhan = ({navigation}) => {
             placeholderTextColor="white"
           />
 
-          <View style={{flexDirection: 'row', marginTop: 0}}>
+          <View style={{ flexDirection: 'row', marginTop: 0 }}>
             <TouchableOpacity>
               <Image
                 style={stylesSearchBar.image}
@@ -70,21 +97,21 @@ const CaNhan = ({navigation}) => {
               marginTop: 20,
             }}>
             <TouchableOpacity
-              onPress={() => navigation.navigate('TrangCaNhan')}>
+              onPress={() => navigation.navigate('TrangCaNhan', { userName: userName, avatarUrl: avatarUrl, token: token })}>
               <Image
                 style={stylesCaNhan.image1}
                 source={require('./assets/avatar1.png')}
               />
             </TouchableOpacity>
             <View>
-              <Text style={stylesCaNhan.text1}>Jimmy</Text>
+              <Text style={stylesCaNhan.text1}>{userName}</Text>
               <Text style={stylesCaNhan.text2}>Xem trang cá nhân</Text>
             </View>
           </View>
         </TouchableOpacity>
         <TouchableOpacity>
           <Image
-            style={{marginTop: 25, marginRight: 15, width: 40, height: 40}}
+            style={{ marginTop: 25, marginRight: 15, width: 40, height: 40 }}
             source={require('./assets/caNhan8.png')}
           />
         </TouchableOpacity>
