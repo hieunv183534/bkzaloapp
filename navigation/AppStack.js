@@ -186,6 +186,25 @@ const AppStack = () => {
           })
         }
       />
+            <Tab.Screen
+        name="Messages"
+        component={MessageStack}
+        options={({ route }) => ({
+          header: () => null,
+          tabBarVisible: getTabBarVisibility(route),
+          // Or Hide tabbar when push!
+          // https://github.com/react-navigation/react-navigation/issues/7677
+          // tabBarVisible: route.state && route.state.index === 0,
+          tabBarLabel: 'Danh bạ',
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons
+              name="chatbox-ellipses-outline"
+              color={color}
+              size={size}
+            />
+          ),
+        })}
+      />
       {/* <Tab.Screen
         name="HomeScreen"
         component={HomeScreen}
@@ -269,25 +288,7 @@ const AppStack = () => {
           ),
         })}
       />
-      <Tab.Screen
-        name="Messages"
-        component={MessageStack}
-        options={({ route }) => ({
-          header: () => null,
-          tabBarVisible: getTabBarVisibility(route),
-          // Or Hide tabbar when push!
-          // https://github.com/react-navigation/react-navigation/issues/7677
-          // tabBarVisible: route.state && route.state.index === 0,
-          tabBarLabel: 'Danh bạ',
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons
-              name="chatbox-ellipses-outline"
-              color={color}
-              size={size}
-            />
-          ),
-        })}
-      />
+
       <Tab.Screen
         name="Profile"
         component={Personal}
