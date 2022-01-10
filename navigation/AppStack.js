@@ -53,7 +53,10 @@ const Messages = ({ navigation }) => (
     <Stack.Screen
       name="NhanTin"
       component={NhanTin}
-      options={{ headerShown: false }}
+      options={{
+        headerShown: false,
+        header: () => null,
+      }}
     />
     <Stack.Screen
       name="Chat"
@@ -98,7 +101,9 @@ const FeedStack = ({ navigation }) => (
 
 const MessageStack = ({ navigation }) => (
   <Stack.Navigator>
-    <Stack.Screen name="Messages" component={MessagesScreen} />
+    <Stack.Screen name="Messages" component={MessagesScreen} options={{
+      header: () => null
+    }} />
     <Stack.Screen
       name="Chat"
       component={ChatScreen}
@@ -116,6 +121,7 @@ const ProfileStack = ({ navigation }) => (
       name="Profile"
       component={ProfileScreen}
       options={{
+        header: () => null,
         headerShown: false,
       }}
     />
@@ -157,6 +163,7 @@ const AppStack = () => {
         name="Tin nhắn"
         component={Messages}
         options={({ route }) => ({
+          header: () => null,
           tabBarVisible: getTabBarVisibility(route),
           // Or Hide tabbar when push!
           // https://github.com/react-navigation/react-navigation/issues/7677
@@ -211,6 +218,7 @@ const AppStack = () => {
         name="Khám Phá"
         component={KhamPha}
         options={({ route }) => ({
+          header: () => null,
           tabBarVisible: getTabBarVisibility(route),
           // Or Hide tabbar when push!
           // https://github.com/react-navigation/react-navigation/issues/7677
@@ -241,6 +249,7 @@ const AppStack = () => {
         name="Home"
         component={FeedStack}
         options={({ route }) => ({
+          header: () => null,
           tabBarLabel: 'Nhật Ký',
           // tabBarVisible: route.state && route.state.index === 0,
           tabBarIcon: ({ color, size }) => (
@@ -256,6 +265,7 @@ const AppStack = () => {
         name="Messages"
         component={MessageStack}
         options={({ route }) => ({
+          header: () => null,
           tabBarVisible: getTabBarVisibility(route),
           // Or Hide tabbar when push!
           // https://github.com/react-navigation/react-navigation/issues/7677
@@ -274,6 +284,7 @@ const AppStack = () => {
         name="Profile"
         component={Personal}
         options={{
+          header: () => null,
           tabBarLabel: 'Cá nhân',
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="person-outline" color={color} size={size} />

@@ -28,7 +28,7 @@ const NhatKy = ({ navigation }) => {
   const [token, onToken] = useState('');
   const [listPosts, onListPosts] = useState([]);
 
-  useEffect(() => {
+  const displayNhatKy = () => {
     AsyncStorage.getItem('token').then(async (data) => {
       onToken(data);
       const postApi = new PostApi(data);
@@ -74,6 +74,9 @@ const NhatKy = ({ navigation }) => {
           console.error(error);
         });
     });
+  }
+  useEffect(() => {
+    displayNhatKy();
   }, []);
 
   // useEffect(() => {
@@ -83,8 +86,8 @@ const NhatKy = ({ navigation }) => {
     // Opening Document Picker to select one file
 
     ImagePicker.openPicker({
-      width: 1200,
-      height: 780,
+      width: 200,
+      height: 150,
       cropping: true,
     }).then((image) => {
       console.log(image);
