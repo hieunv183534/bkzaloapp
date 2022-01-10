@@ -11,6 +11,8 @@ import {
   ScrollView,
   FlatList,
   ImageBackground,
+  Alert,
+  ToastAndroid,
 } from 'react-native';
 import LogInImage from './assets/logIn.png';
 import AvatarImage1 from './assets/avatar1.png';
@@ -67,6 +69,39 @@ const DangBai = ({ navigation, route }) => {
     });
     console.log('Upload imgInfo store!');
   };
+
+
+    // const DangBaiAlert = () =>
+    //   Alert.alert(
+    //     "Xác Nhận Đăng Bài",
+    //     "Bạn có muốn đăng bài",
+    //     [
+    //       {
+    //         text: "Hủy bỏ",
+    //         onPress: () => console.log("Cancel Pressed"),
+    //         style: "cancel"
+    //       },
+    //       { text: "Đồng Ý", onPress: () => console.log("OK Pressed") }
+    //     ]
+    //   );
+
+    const showToastWithGravity = () => {
+      ToastAndroid.showWithGravity(
+        "All Your Base Are Belong To Us",
+        ToastAndroid.SHORT,
+        ToastAndroid.CENTER
+      );
+    };
+
+    const showToastWithGravityAndOffset = () => {
+      ToastAndroid.showWithGravityAndOffset(
+        "Đăng bài thành công",
+        ToastAndroid.LONG,
+        ToastAndroid.BOTTOM,
+        25,
+        50
+      );
+    };
 
   return (
     <View style={{ backgroundColor: 'white' }}>
@@ -183,11 +218,13 @@ const DangBai = ({ navigation, route }) => {
         </View>
 
       </ScrollView>
-      <TouchableOpacity>
+      <TouchableOpacity onPress={() => showToastWithGravityAndOffset()}>
           <Text style={{marginLeft:300, marginRight:15, marginTop:15,marginBottom:15, backgroundColor:'#1e90ff', padding: 10, textAlign:'center', color:'white'}}>
               Đăng bài
           </Text>
         </TouchableOpacity>
+
+        {/* <Button style={stylesNhatKy.button} title={"Đăng Bài"} onPress={() => showToastWithGravityAndOffset()} /> */}
     </View>
   );
 };

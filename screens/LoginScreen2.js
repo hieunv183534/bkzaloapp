@@ -11,6 +11,7 @@ import {
   ScrollView,
   FlatList,
   ImageBackground,
+  Alert,
 } from 'react-native';
 import LogInImage from './assets/logIn.png';
 import AvatarImage1 from './assets/avatar1.png';
@@ -43,6 +44,24 @@ const LoginScreen2 = ({ navigation }) => {
         });
     }
   };
+
+  // const submitPhoneNumber = (text) =>{
+  //   if(text.length >10){
+  //     setTodos((prevTodos) => {
+  //       return [
+  //         {
+  //           text:text
+  //         },
+  //         ...prevTodos
+  //       ];
+  //     });
+  //   }
+  //   else{
+  //     Alert.alert("Dài quá","Số điện thoại bạn nhập chưa chính xác. Hãy nhập lại số điện thoại có 10 chữ số", [
+  //       {text:'Đồng Ý', onPress: () => console.log('alert closed')}
+  //     ]);
+  //   }
+  // }
 
   return (
     <View style={{ flex: 1, backgroundColor: 'white' }}>
