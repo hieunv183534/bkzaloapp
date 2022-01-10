@@ -12,6 +12,7 @@ import Chat from '../screens/ChatScreen';
 import DanhBa from '../screens/DanhBa';
 import KhamPha from '../screens/KhamPha';
 import NhatKy from '../screens/NhatKy';
+import BinhLuan from '../screens/BinhLuan';
 import DangBai from '../screens/DangBai';
 import TrangCaNhan from '../screens/TrangCaNhan';
 import TrangCaNhan2 from '../screens/TrangCaNhan2';
@@ -74,6 +75,11 @@ const FeedStack = ({ navigation }) => (
     <Stack.Screen
       name="NhatKy"
       component={NhatKy}
+      options={{ headerShown: false }}
+    />
+    <Stack.Screen
+      name="BinhLuan"
+      component={BinhLuan}
       options={{ headerShown: false }}
     />
     <Stack.Screen
@@ -176,7 +182,9 @@ const AppStack = () => {
               size={size}
             />
           ),
-        })}
+          // tabBarIcon: ({ tintColor }) => return(<Image source={require('./assets/icon1.png')} style={{width: 26, height: 26}} />);
+          })
+        }
       />
       {/* <Tab.Screen
         name="HomeScreen"

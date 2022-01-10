@@ -97,98 +97,6 @@ const NhatKy = ({ navigation }) => {
     });
   };
 
-  const dataNhatKy = [
-    {
-      id: 1,
-      name: 'Devin',
-      image: './assets/avatar1.png',
-      time: 'Hôm qua lúc 17:40',
-      content: 'Đây là bài đăng 1',
-      like: 41,
-      comment: 12,
-    },
-    {
-      id: 2,
-      name: 'Dan',
-      image: './assets/avatar2.png',
-      time: 'Hôm qua lúc 17:00',
-      content: 'Đây là bài đăng 2',
-      like: 31,
-      comment: 20,
-    },
-    {
-      id: 3,
-      name: 'Dominic',
-      image: './assets/avatar2.png',
-      time: 'Hôm qua lúc 15:40',
-      content: 'Đây là bài đăng 13',
-      like: 71,
-      comment: 32,
-    },
-    {
-      id: 4,
-      name: 'Jackson',
-      image: './assets/avatar1.png',
-      time: 'Hôm qua lúc 14:40',
-      content: 'Đây là bài đăng 14',
-      like: 16,
-      comment: 2,
-    },
-    {
-      id: 5,
-      name: 'James',
-      image: './assets/avatar1.png',
-      time: 'Hôm qua lúc 13:40',
-      content: 'Đây là bài đăng 15',
-      like: 15,
-      comment: 12,
-    },
-    {
-      id: 6,
-      name: 'Joel',
-      image: './assets/avatar2.png',
-      time: 'Hôm qua lúc 12:40',
-      content: 'Đây là bài đăng 16',
-      like: 12,
-      comment: 2,
-    },
-    {
-      id: 7,
-      name: 'John',
-      image: './assets/avatar1.png',
-      time: 'Hôm qua lúc 11:40',
-      content: 'Đây là bài đăng 17',
-      like: 11,
-      comment: 2,
-    },
-    {
-      id: 8,
-      name: 'Jillian',
-      image: './assets/avatar2.png',
-      time: 'Hôm qua lúc 10:40',
-      content: 'Đây là bài đăng 18',
-      like: 12,
-      comment: 2,
-    },
-    {
-      id: 9,
-      name: 'Jimmy',
-      image: './assets/avatar1.png',
-      time: 'Hôm qua lúc 9:40',
-      content: 'Đây là bài đăng 19',
-      like: 13,
-      comment: 2,
-    },
-    {
-      id: 10,
-      name: 'Julie',
-      image: './assets/avatar1.png',
-      time: 'Hôm qua lúc 6:40',
-      content: 'Đây là bài đăng 11',
-      like: 14,
-      comment: 12,
-    },
-  ];
   return (
     <View style={{ backgroundColor: 'white' }}>
       <View>
@@ -354,10 +262,12 @@ const NhatKy = ({ navigation }) => {
                   source={require('./assets/nhatKy8.png')}
                 />
                 <Text>{item.like}</Text>
+              <TouchableOpacity onPress={() =>{navigation.navigate('BinhLuan', {item: item});}}>
                 <Image
                   style={stylesNhatKy.image2}
                   source={require('./assets/nhatKy9.png')}
                 />
+                </TouchableOpacity>
                 <Text>{item.comment}</Text>
               </View>
             </View>

@@ -181,7 +181,13 @@ const DangBai = ({ navigation, route }) => {
             </TouchableOpacity>
           </View>
         </View>
+
       </ScrollView>
+      <TouchableOpacity>
+          <Text style={{marginLeft:300, marginRight:15, marginTop:15,marginBottom:15, backgroundColor:'#1e90ff', padding: 10, textAlign:'center', color:'white'}}>
+              Đăng bài
+          </Text>
+        </TouchableOpacity>
     </View>
   );
 };
