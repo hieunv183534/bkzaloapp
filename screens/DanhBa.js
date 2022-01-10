@@ -153,7 +153,7 @@ const DanhBa = ({navigation}) => {
                     }}>
                     <TouchableOpacity
                       onPress={() => {
-                        navigation.navigate('NhanTin2', {
+                        navigation.navigate('Chatscreen', {
                           itemId: item.id,
                           itemName: item.name,
                         });

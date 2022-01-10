@@ -55,7 +55,11 @@ class PostApi {
 
   /**
    * chỉnh sửa bài viết
-   * @param {*} post object bài viết lấy từ biding và thay đổi mỗi described, mediaUrls, canComment
+   * @param {*} post{
+   *  -postId: Id bài viết muốn cập nhật. required
+   *  -described : nếu không thay đổi gì thì để null. nếu ko null mặc định thay đổi và bị ghi đè
+   *  -mediaUrls: nếu không thay đổi gì thì để null. nếu ko null mặc định thay đổi và bị ghi đè
+   * }
    * @returns {
    *  -code
    *  -message

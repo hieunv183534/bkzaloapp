@@ -163,7 +163,7 @@ const NhatKy = ({ navigation }) => {
                     source={require('./assets/nhatKy2.png')}
                   />
                 </TouchableOpacity>
-                <TouchableOpacity>
+                <TouchableOpacity onPress={() => navigation.navigate('ThongBao')}>
                   <Image
                     style={stylesSearchBar.image}
                     source={require('./assets/nhatKy3.png')}

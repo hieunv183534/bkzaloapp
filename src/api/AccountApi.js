@@ -94,8 +94,8 @@ class AccountApi {
 
   /**
    * chỉnh sửa tên hoặc avatar
-   * @param {*} userName
-   * @param {*} avatarUrl
+   * @param {*} userName // nếu ko thay đổi gì thì để null
+   * @param {*} avatarUrl // nếu không thay đổi gì thì để null
    * @returns {
    *  -code
    *  -message
