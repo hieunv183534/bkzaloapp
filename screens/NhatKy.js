@@ -50,20 +50,21 @@ const NhatKy = ({ navigation }) => {
               fileReaderInstance.readAsDataURL(blob);
               fileReaderInstance.onload = () => {
                 base64data = fileReaderInstance.result;
+                base64data = base64data.replace('application/octet-stream', 'image/jpeg')
                 console.log(base64data);
+                const curr = {
+                  id: conv[i].postId,
+                  name: conv[i].author.userName,
+                  image: './assets/avatar1.png',
+                  // imageUri: "data:image/png;base64," + blob,
+                  imageUri: base64data,
+                  time: conv[i].createdAt,
+                  content: conv[i].described,
+                  like: conv[i].like,
+                  comment: conv[i].comment,
+                };
+                posts.push(curr)
               }
-              const curr = {
-                id: conv[i].postId,
-                name: conv[i].author.userName,
-                image: './assets/avatar1.png',
-                // imageUri: "data:image/png;base64," + blob,
-                imageUri: base64data,
-                time: conv[i].createdAt,
-                content: conv[i].described,
-                like: conv[i].like,
-                comment: conv[i].comment,
-              };
-              posts.push(curr)
             }
             console.log("posts: ", posts)
             onListPosts(posts);
