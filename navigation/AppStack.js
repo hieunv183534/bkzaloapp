@@ -78,9 +78,8 @@ const FeedStack = ({ navigation }) => (
       options={{ headerShown: false }}
     />
     <Stack.Screen
-      name="BinhLuan"
+      name="Nhật ký"
       component={BinhLuan}
-      options={{ headerShown: false }}
     />
     <Stack.Screen
       name="DangBai"
@@ -183,10 +182,10 @@ const AppStack = () => {
             />
           ),
           // tabBarIcon: ({ tintColor }) => return(<Image source={require('./assets/icon1.png')} style={{width: 26, height: 26}} />);
-          })
+        })
         }
       />
-            <Tab.Screen
+      <Tab.Screen
         name="Messages"
         component={MessageStack}
         options={({ route }) => ({

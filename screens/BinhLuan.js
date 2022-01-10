@@ -10,6 +10,7 @@ import {
   TextInput,
   ScrollView,
   FlatList,
+  YellowBox,
   ImageBackground,
 } from 'react-native';
 import LogInImage from './assets/logIn.png';
@@ -21,84 +22,208 @@ import DocumentPicker from 'react-native-document-picker';
 import ImagePicker from 'react-native-image-crop-picker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import PostApi from '../src/api/PostApi';
-import FileApi from '../src/api/FileApi';
+import CommentApi from '../src/api/CommentApi';
 
 const BinhLuan = ({ navigation, route }) => {
   const [singleFile, setSingleFile] = useState(null);
   const [item, onItem] = useState(null);
-  const [listPosts, onListPosts] = useState([]);
+  const [listComments, onListComments] = useState([]);
+  const [token, onToken] = useState('');
+  const [content, onContent] = useState('');
 
-  useEffect(()=>{
-    const { item } = route.params;
-    console.log("item: ",item.name);
+  useEffect(() => {
+    const { item, token } = route.params;
+    YellowBox.ignoreWarnings(['VirtualizedLists should never be nested']);
+    console.log("item: ", item.id);
+    onToken(token);
     onItem(item);
-  },[])
+    const commentApi = new CommentApi(token);
+    commentApi
+      .getComment(item.id, 0, 10)
+      .then(async (res) => {
+        console.log('commentApi: ', res.data.data);
+        if (res.data.code === 1000) {
+          let comments = [];
+          const conv = res.data.data;
+          for (let i in conv) {
+            const curr = {
+              id: conv[i].commentId,
+              name: conv[i].poster.userName,
+              content: conv[i].content,
+              url: require('./assets/avatar1.png'),
+              // imageUri: "data:image/png;base64," + blob,
+              time: conv[i].createdAt,
+            }
+            comments.push(curr)
+
+          }
+          comments = comments.reverse()
+
+          onListComments(comments)
+        }
+      }).catch((error) => {
+        console.error(error);
+      });
+  }, [])
+
+  const setComment = () => {
+
+    const commentApi = new CommentApi(token);
+    commentApi
+      .setComment(item.id, content)
+      .then(async (res) => {
+        console.log('commentApi: ', res.data);
+        if (res.data.code === 1000) {
+
+          commentApi
+            .getComment(item.id, 0, 10)
+            .then(async (res) => {
+              console.log('commentApi: ', res.data.data);
+              if (res.data.code === 1000) {
+                let comments = [];
+                const conv = res.data.data;
+                for (let i in conv) {
+                  const curr = {
+                    id: conv[i].commentId,
+                    name: conv[i].poster.userName,
+                    content: conv[i].content,
+                    url: require('./assets/avatar1.png'),
+                    // imageUri: "data:image/png;base64," + blob,
+                    time: conv[i].createdAt,
+                  }
+                  comments.push(curr)
+                }
+                comments = comments.reverse()
+                onListComments(comments)
+              }
+            }).catch((error) => {
+              console.error(error);
+            });
+        }
+      }).catch((error) => {
+        console.error(error);
+      });
+  }
+  const receive = [
+    {
+      id: "1",
+      name: "Enae",
+      content: "Yeuqua",
+      url: require('./assets/avatar1.png'),
+      time: "2022-01-10T14:16:34",
+    },
+    {
+      id: "2",
+      name: "AAAAAAAAnae",
+      content: "Yeuqua di",
+      url: require('./assets/avatar1.png'),
+      time: "2022-01-10T14:16:34",
+
+    },
+    {
+      id: "3",
+      name: "Oanh",
+      content: "Yeu em",
+      url: require('./assets/avatar1.png'),
+      time: "2022-01-10T14:16:34",
+
+    },
+  ]
+  const formatDateTime = (_date) => {
+    if (_date != null) {
+      var date = new Date(_date);
+      var day = date.getDate();
+      day = (day < 10) ? '0' + day : day;
+      var month = date.getMonth() + 1;
+      month = (month < 10) ? '0' + month : month;
+      var year = date.getFullYear();
+
+      var hour = date.getHours();
+      hour = (hour < 10) ? '0' + hour : hour;
+      var minit = date.getMinutes();
+      minit = (minit < 10) ? '0' + minit : minit;
+
+      return hour + ":" + minit + " " + day + '/' + month + '/' + year;
+    }
+    else {
+      return '';
+    }
+  }
   return (
     <View style={{ backgroundColor: 'white' }}>
       <ScrollView>
-     {item!==null?( <View style={{ backgroundColor: 'white' }}>
-       
-            <View>
-              <View
-                style={{
-                  backgroundColor: '#f5f5f5',
-                  height: 4,
-                  width: 500,
-                }}></View>
-              <View
-                style={{
-                  flexDirection: 'row',
-                  justifyContent: 'space-between',
-                  marginTop: 0,
-                }}>
-                <View
-                  style={{
-                    flexDirection: 'row',
-                    justifyContent: 'flex-start',
-                    marginTop: 0,
-                  }}>
-                  <TouchableOpacity
-                    activeOpacity={0.2}
-                    // onPress={() => navigation.navigate('TrangCaNhan2')}
-                    >
-                    <Image
-                      style={stylesNhatKy.avatarPost}
-                      source={require('./assets/avatar2.png')}
-                    />
-                  </TouchableOpacity>
-                  <View>
-                  <Text style={stylesNhatKy.namePost}>{item.name}</Text>
-                    <Text style={stylesNhatKy.timePost}>{item.time}</Text>
-                  </View>
-                </View>
-                <Image
-                  style={stylesNhatKy.image2}
-                  source={require('./assets/nhatKy7.png')}
-                />
-              </View>
-              <Text style={stylesNhatKy.contentPost}>{item.content}</Text>
-              <Image
-                style={stylesNhatKy.imagePost}
-                // source={require('./assets/baiDang1.png')}
-                source={{ uri: item.imageUri }}
-              />
+        {item !== null ? (<View style={{ backgroundColor: 'white' }}>
+
+          <View>
+            <View
+              style={{
+                backgroundColor: '#f5f5f5',
+                height: 4,
+                width: 500,
+              }}></View>
+            <View
+              style={{
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                marginTop: 0,
+              }}>
               <View
                 style={{
                   flexDirection: 'row',
                   justifyContent: 'flex-start',
-                  marginTop: 10,
+                  marginTop: 0,
                 }}>
-                <Image
-                  style={stylesNhatKy.image2}
-                  source={require('./assets/nhatKy8.png')}
-                />
-                <Text>{item.like}</Text>
+                <TouchableOpacity
+                  activeOpacity={0.2}
+                // onPress={() => navigation.navigate('TrangCaNhan2')}
+                >
+                  <Image
+                    style={stylesNhatKy.avatarPost}
+                    source={require('./assets/avatar2.png')}
+                  />
+                </TouchableOpacity>
+                <View>
+                  <Text style={stylesNhatKy.namePost}>{item.name}</Text>
+                  <Text style={stylesNhatKy.timePost}>{item.time}</Text>
+                </View>
               </View>
+              <Image
+                style={stylesNhatKy.image2}
+                source={require('./assets/nhatKy7.png')}
+              />
             </View>
-            <View style={{ flexDirection: 'row', marginTop: 0 }}>
+            <Text style={stylesNhatKy.contentPost}>{item.content}</Text>
+            <Image
+              style={stylesNhatKy.imagePost}
+              // source={require('./assets/baiDang1.png')}
+              source={{ uri: item.imageUri }}
+            />
+            <View
+              style={{
+                flexDirection: 'row',
+                justifyContent: 'flex-start',
+                marginTop: 10,
+              }}>
+              <Image
+                style={stylesNhatKy.image2}
+                source={require('./assets/nhatKy8.png')}
+              />
+              <Text>{item.like}</Text>
+            </View>
+          </View>
+          <View style={{ flexDirection: 'row', marginTop: 0 }}>
+            <FlatList
+              data={listComments}
+              renderItem={({ item }) => (
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    justifyContent: 'flex-start',
+                    marginTop: 10,
+                  }}>
                   <Image
                     style={stylesNhanTin.avatarImage}
-                    source={require('./assets/avatar1.png')}
+                    source={item.url}
                   />
                   {/* </TouchableOpacity> */}
                   <ScrollView
@@ -117,70 +242,80 @@ const BinhLuan = ({ navigation, route }) => {
                       {/* <TouchableOpacity activeOpacity={0.2} onPress={() =>{navigation.navigate('NhanTin2', {itemId: item.id, itemName: item.name,});}}> */}
                       <View>
                         <Text style={stylesNhanTin.nameText}>
-                          Anna Nguyen
+                          {item.name}
                         </Text>
                         <Text style={stylesNhanTin.messengerText}>
-                          Bai nay hay wa!!!
+                          {item.content}
                         </Text>
                       </View>
                     </View>
                   </ScrollView>
+                  <Text style={stylesNhanTin.messengerTime}>
+                    {formatDateTime(item.time)}
+                  </Text>
                 </View>
-
-        <View
-          style={{
-            flexDirection: 'row',
-            justifyContent:"space-between",
-            marginTop: 5,
-            backgroundColor: 'white',
-            borderColor: 'gray',
-            borderRadius: 1,
-          }}>
-            <View 
-          style={{
-            flexDirection: 'row',
-            justifyContent: 'flex-start',
-          }}>
-          <TouchableOpacity
-            // onPress={() => navigation.navigate('TrangCaNhan')}
-            >
-            <Image
-              style={stylesNhatKy.image1}
-              source={require('./assets/binhLuan01.png')}
+              )}
+              keyExtractor={(item) => `${item.id}`}
+              ListFooterComponent={<View style={{ height: 20 }} />}
             />
-          </TouchableOpacity>
-          <TextInput
-        // style={stylesLogIn2.input}
-        placeholder="Nhập bình luận"
-        // onChangeText={(text) => setPassword(text)}
-        // secureTextEntry
-      />
+            {/* // */}
           </View>
-<View 
-          style={{
-            flexDirection: 'row',
-            
-          }}>
-          <TouchableOpacity
-            // onPress={() => navigation.navigate('TrangCaNhan')}
-            >
-            <Image
-              style={stylesNhatKy.image1}
-              source={require('./assets/binhLuan02.png')}
-            />
-          </TouchableOpacity>
-          <TouchableOpacity
-            // onPress={() => navigation.navigate('TrangCaNhan')}
-            >
-            <Image
-              style={stylesNhatKy.image1}
-              source={require('./assets/binhLuan03.png')}
-            />
-          </TouchableOpacity>
-          </View>
-        </View>
 
-      </View>):null}
+          <View
+            style={{
+              flexDirection: 'row',
+              justifyContent: "space-between",
+              marginTop: 5,
+              backgroundColor: 'white',
+              borderColor: 'gray',
+              borderRadius: 1,
+            }}>
+            <View
+              style={{
+                flexDirection: 'row',
+                justifyContent: 'flex-start',
+              }}>
+              <TouchableOpacity
+              // onPress={() => navigation.navigate('TrangCaNhan')}
+              >
+                <Image
+                  style={stylesNhatKy.image1}
+                  source={require('./assets/binhLuan01.png')}
+                />
+              </TouchableOpacity>
+              <TextInput
+                // style={stylesLogIn2.input}
+                placeholder="Nhập bình luận"
+                onChangeText={(text) => onContent(text)}
+                value={content}
+              // secureTextEntry
+              />
+            </View>
+            <View
+              style={{
+                flexDirection: 'row',
+
+              }}>
+              <TouchableOpacity
+              // onPress={() => navigation.navigate('TrangCaNhan')}
+              >
+                <Image
+                  style={stylesNhatKy.image1}
+                  source={require('./assets/binhLuan02.png')}
+                />
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => { onContent(''); setComment() }}
+              >
+                <Image
+                  style={stylesNhatKy.image1}
+                  source={require('./assets/binhLuan03.png')}
+                />
+              </TouchableOpacity>
+            </View>
+          </View>
+
+        </View>) : null}
       </ScrollView>
     </View>
   );
@@ -220,7 +355,7 @@ const stylesNhatKy = StyleSheet.create({
   text1: {
     color: 'gray',
     fontSize: 14,
-    width:300,
+    width: 300,
   },
   text2: {
     color: 'gray',

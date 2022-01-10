@@ -33,6 +33,27 @@ const NhanTin = ({ navigation }) => {
 
   // }, []);
 
+  const formatDateTime = (_date) => {
+    if (_date != null) {
+      var date = new Date(_date);
+      var day = date.getDate();
+      day = (day < 10) ? '0' + day : day;
+      var month = date.getMonth() + 1;
+      month = (month < 10) ? '0' + month : month;
+      var year = date.getFullYear();
+
+      var hour = date.getHours();
+      hour = (hour < 10) ? '0' + hour : hour;
+      var minit = date.getMinutes();
+      minit = (minit < 10) ? '0' + minit : minit;
+
+      return hour + ":" + minit + " " + day + '/' + month + '/' + year;
+    }
+    else {
+      return '';
+    }
+  }
+
   useEffect(() => {
     AsyncStorage.getItem('token').then(async (data) => {
       onToken(data);
@@ -63,7 +84,7 @@ const NhanTin = ({ navigation }) => {
             }
             setConversations(conversations);
             onReceive(conversations);
-
+            console.log("conversations: ", conversations);
           }
         })
         .catch((error) => {
@@ -186,7 +207,7 @@ const NhanTin = ({ navigation }) => {
                         </Text>
                       </View>
                       <Text style={stylesNhanTin.messengerTime}>
-                        {item.time}
+                        {formatDateTime(item.time)}
                       </Text>
                     </View>
                   </ScrollView>
@@ -194,7 +215,7 @@ const NhanTin = ({ navigation }) => {
               </TouchableOpacity>
             </View>
           )}
-          keyExtractor={(item) => '${item.id}'}
+          keyExtractor={(item) => `${item.conversationId}`}
           ListFooterComponent={<View style={{ height: 20 }} />}
         />
       </View>

@@ -72,7 +72,7 @@ class PostApi {
    * @returns
    */
   like(postId) {
-    return BaseApiConfig.post(`like/${postId}`, this.headers);
+    return BaseApiConfig.post(`like/${postId}`, {}, this.headers);
   }
 
   /**

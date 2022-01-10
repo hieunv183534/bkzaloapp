@@ -28,6 +28,45 @@ const NhatKy = ({ navigation }) => {
   const [token, onToken] = useState('');
   const [listPosts, onListPosts] = useState([]);
 
+  const formatDateTime = (_date) => {
+    if (_date != null) {
+      var date = new Date(_date);
+      var day = date.getDate();
+      day = (day < 10) ? '0' + day : day;
+      var month = date.getMonth() + 1;
+      month = (month < 10) ? '0' + month : month;
+      var year = date.getFullYear();
+
+      var hour = date.getHours();
+      hour = (hour < 10) ? '0' + hour : hour;
+      var minit = date.getMinutes();
+      minit = (minit < 10) ? '0' + minit : minit;
+
+      return hour + ":" + minit + " " + day + '/' + month + '/' + year;
+    }
+    else {
+      return '';
+    }
+  }
+
+  const likeAction = (postId) => {
+    console.log('postId: ', postId);
+    console.log('token: ', token);
+    const postApi = new PostApi(token);
+    postApi
+      .like(postId)
+      .then(async (res) => {
+        console.log('likeApi: ', res);
+        //res.data.data.conversations = [] => conversationId/ lastMessage.content * createdAt/ partner.accountId *avatarUrl *userName
+        if (res.data.code === 1000) {
+          displayNhatKy()
+        }
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  }
+
   const displayNhatKy = () => {
     AsyncStorage.getItem('token').then(async (data) => {
       onToken(data);
@@ -51,7 +90,6 @@ const NhatKy = ({ navigation }) => {
               fileReaderInstance.onload = () => {
                 base64data = fileReaderInstance.result;
                 base64data = base64data.replace('application/octet-stream', 'image/jpeg')
-                console.log(base64data);
                 const curr = {
                   id: conv[i].postId,
                   name: conv[i].author.userName,
@@ -62,6 +100,7 @@ const NhatKy = ({ navigation }) => {
                   content: conv[i].described,
                   like: conv[i].like,
                   comment: conv[i].comment,
+                  isLike: conv[i].isLiked,
                 };
                 posts.push(curr)
               }
@@ -118,7 +157,7 @@ const NhatKy = ({ navigation }) => {
             />
             <ScrollView>
               <View style={{ flexDirection: 'row', marginTop: 0 }}>
-                <TouchableOpacity>
+                <TouchableOpacity onPress={displayNhatKy}>
                   <Image
                     style={stylesSearchBar.image}
                     source={require('./assets/nhatKy2.png')}
@@ -237,7 +276,7 @@ const NhatKy = ({ navigation }) => {
                   {/* <TouchableOpacity activeOpacity={0.2} onPress={() =>{navigation.navigate('NhanTin2', {itemId: item.id, itemName: item.name,});}}> */}
                   <View>
                     <Text style={stylesNhatKy.namePost}>{item.name}</Text>
-                    <Text style={stylesNhatKy.timePost}>{item.time}</Text>
+                    <Text style={stylesNhatKy.timePost}>{formatDateTime(item.time)}</Text>
                   </View>
                 </View>
                 <Image
@@ -257,23 +296,25 @@ const NhatKy = ({ navigation }) => {
                   justifyContent: 'flex-start',
                   marginTop: 10,
                 }}>
-                <Image
-                  style={stylesNhatKy.image2}
-                  source={require('./assets/nhatKy8.png')}
-                />
+                <TouchableOpacity onPress={() => { likeAction(item.id) }}>
+                  <Image
+                    style={stylesNhatKy.image2}
+                    source={item.isLike ? require('./assets/nhatKy8red.png') : require('./assets/nhatKy8.png')}
+                  />
+                </TouchableOpacity>
                 <Text>{item.like}</Text>
-              <TouchableOpacity onPress={() =>{navigation.navigate('BinhLuan', {item: item});}}>
-                <Image
-                  style={stylesNhatKy.image2}
-                  source={require('./assets/nhatKy9.png')}
-                />
+                <TouchableOpacity onPress={() => { navigation.navigate('Nhật ký', { item: item, token: token }); }}>
+                  <Image
+                    style={stylesNhatKy.image2}
+                    source={require('./assets/nhatKy9.png')}
+                  />
                 </TouchableOpacity>
                 <Text>{item.comment}</Text>
               </View>
             </View>
           )}
           keyExtractor={(item) => `${item.id}`}
-          ListFooterComponent={<View style={{ height: 20 }} />}
+          ListFooterComponent={<View style={{ height: 350 }} />}
         />
       </View>
     </View>
