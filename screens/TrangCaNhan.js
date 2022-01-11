@@ -34,7 +34,7 @@ const TrangCaNhan = ({ navigation, route }) => {
 
   useEffect(() => {
     const { avatarUrl, token, userName } = route.params;
-    console.log("userName: ", userName);
+    console.log("avatarUrl: ", avatarUrl);
     onToken(token);
     onUserName(userName)
     onTempUserName(userName)

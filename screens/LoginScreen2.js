@@ -12,6 +12,7 @@ import {
   FlatList,
   ImageBackground,
   Alert,
+  ToastAndroid,
 } from 'react-native';
 import LogInImage from './assets/logIn.png';
 import AvatarImage1 from './assets/avatar1.png';
@@ -25,6 +26,15 @@ const LoginScreen2 = ({ navigation }) => {
   const [phone, setPhone] = useState('');
   const [password, setPassword] = useState('');
 
+  const showToastWithGravityAndOffset = (text) => {
+    ToastAndroid.showWithGravityAndOffset(
+      text,
+      ToastAndroid.LONG,
+      ToastAndroid.BOTTOM,
+      25,
+      50
+    );
+  };
   const processLogIn = async () => {
     if (phone.length != 0 && password.length != 0) {
       console.log('phone: ', phone);
@@ -35,9 +45,11 @@ const LoginScreen2 = ({ navigation }) => {
         .then((res) => {
           console.log('aaaaaa: ', res.data);
           if (res.data.code === 1000) {
+            showToastWithGravityAndOffset("Đăng nhập thành công")
+            setPassword('');
+            setPhone('');
             AsyncStorage.setItem('token', res.data.data.token);
             const accountApi1 = new AccountApi(res.data.data.token);
-
             accountApi1.getAccountByPhoneNumber(phone).then((res) => {
               console.log('bbbbbb: ', res.data);
               if (res.data.code === 1000) {
@@ -45,9 +57,14 @@ const LoginScreen2 = ({ navigation }) => {
                 AsyncStorage.setItem('userName', res.data.data.userName);
                 AsyncStorage.setItem('avatarUrl', res.data.data.avatarUrl);
                 AsyncStorage.setItem('phoneNumber', res.data.data.phoneNumber);
+                console.log('avatarUrl', res.data.data.avatarUrl);
+
               }
             })
             navigation.navigate('LoginScreen3');
+          } else {
+            showToastWithGravityAndOffset("Đăng nhập thất bại !!!")
+
           }
         })
         .catch((error) => {

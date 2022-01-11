@@ -22,6 +22,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { listUser } from '../data/listUser';
 import ConversationApi from '../src/api/ConversationApi';
 import { useIsFocused } from "@react-navigation/native";
+import FileApi from '../src/api/FileApi';
 
 const NhanTin = ({ navigation }) => {
   const [conversations, setConversations] = useState([]);
@@ -57,70 +58,117 @@ const NhanTin = ({ navigation }) => {
   }
 
   useEffect(() => {
+    displayConversation()
+  }, [isFocused]);
+
+  const displayConversation = () => {
     AsyncStorage.getItem('token').then(async (data) => {
       onToken(data);
       console.log('ConversationApi');
+      const fileApi = new FileApi(data);
+
       const conversationApi = new ConversationApi(data);
+      console.log('data: ', data);
       await conversationApi
         .getListConversation(0, 10)
-        .then((res) => {
-          console.log(res);
-          //res.data.data.conversations = [] => conversationId/ lastMessage.content * createdAt/ partner.accountId *avatarUrl *userName
+        .then(async (res) => {
+          console.log("@@@@@@@@@@@@@@: ", res);
           if (res.data.code === 1000) {
-            let conversations = [];
+            let posts = [];
             const conv = res.data.data.conversations;
             for (let i in conv) {
-              // console.log("conv.partner.accountId:", conv[i]);
+              const img = conv[i].partner.avatarUrl;
+              let blob;
+              let base64data;
+              if (img !== null) {
+                console.log("333333333333333333");
+                await fileApi.getFile(img).then((rest) => {
+                  blob = rest.data;
+                  const fileReaderInstance = new FileReader();
+                  fileReaderInstance.readAsDataURL(blob);
+                  fileReaderInstance.onload = () => {
+                    base64data = fileReaderInstance.result;
+                    base64data = base64data.replace('application/octet-stream', 'image/jpeg')
 
-              const curr = {
-                id: conv[i].partner.accountId,
-                conversationId: conv[i].conversationId,
-                name: conv[i].partner.userName,
-                phone: '00000000000',
-                // image: img !== null ? require('./assets/zalologo.png') : img,
-                image: require('./assets/zalologo.png'),
-                message: conv[i].lastMessage.content,
-                time: conv[i].lastMessage.createdAt,
-              };
-              conversations.push(curr)
+                    const curr = {
+                      id: conv[i].partner.accountId,
+                      conversationId: conv[i].conversationId,
+                      name: conv[i].partner.userName,
+                      phone: '00000000000',
+                      // image: img !== null ? require('./assets/zalologo.png') : img,
+                      image: base64data,
+                      message: conv[i].lastMessage.content,
+                      time: conv[i].lastMessage.createdAt,
+                    };
+                    console.log("cur1111111111: ", curr);
+                    posts.push(curr);
+                  }
+                });
+
+              } else {
+                console.log("444444444444444");
+
+                const curr = {
+                  id: conv[i].partner.accountId,
+                  conversationId: conv[i].conversationId,
+                  name: conv[i].partner.userName,
+                  phone: '00000000000',
+                  // image: img !== null ? require('./assets/zalologo.png') : img,
+                  image: null,
+                  message: conv[i].lastMessage.content,
+                  time: conv[i].lastMessage.createdAt,
+                };
+                console.log("cur222222: ", curr);
+                posts.push(curr)
+              }
+              console.log("posts9999999999999999999: ", posts)
+
             }
-            setConversations(conversations);
-            onReceive(conversations);
-            console.log("conversations: ", conversations);
+            console.log("posts: ", posts)
+            // onListPosts(posts);
+            setConversations(posts);
+            onReceive(posts);
+
           }
         })
         .catch((error) => {
-          console.error(error);
+          console.error("9994554645:", error);
         });
     });
-  }, [isFocused]);
-
+  }
+  // const abc = (conversations) => {
+  //   console.log("conversations1111 ", conversations);
+  //   onReceive(conversations);
+  // }
   const getAccountByPhone = async (text) => {
     if (text !== '') {
       let arr = [];
-      const accountApi = new AccountApi(token);
-      await accountApi
-        .getAccountByPhoneNumber(text)
-        .then((res) => {
-          console.log(res.data);
-          const img = res.data.data.avatarUrl;
-          const curr = {
-            id: res.data.data.accountId,
-            name: res.data.data.userName,
-            phone: res.data.data.phoneNumber,
-            // image: img !== null ? require('./assets/zalologo.png') : img,
-            image: require('./assets/zalologo.png'),
-            message: 'message',
-            time: '15 phút',
-          };
-          console.log('image: ', curr.image);
-          arr.push(curr);
-        })
-        .catch((error) => {
-          console.error(error);
-        });
+      if (text.length >= 10) {
+        const accountApi = new AccountApi(token);
+        await accountApi
+          .getAccountByPhoneNumber(text)
+          .then((res) => {
+            console.log(res.data);
+            const img = res.data.data.avatarUrl;
+            const curr = {
+              id: res.data.data.accountId,
+              name: res.data.data.userName,
+              phone: res.data.data.phoneNumber,
+              // image: img !== null ? require('./assets/zalologo.png') : img,
+              image: null,
+              message: 'message',
+              time: '15 phút',
+            };
+            console.log('image: ', curr.image);
+            arr.push(curr);
+          })
+          .catch((error) => {
+            console.error(error);
+          });
+      }
       onReceive(arr);
     } else {
+      // console.log("conversations: ", conversations);
       onReceive(conversations);
     }
   };
@@ -183,7 +231,7 @@ const NhanTin = ({ navigation }) => {
                 <View style={{ flexDirection: 'row', marginTop: 0 }}>
                   <Image
                     style={stylesNhanTin.avatarImage}
-                    source={item.image}
+                    source={item.image !== null ? { uri: item.image } : require('./assets/zalologo.png')}
                   />
                   {/* </TouchableOpacity> */}
                   <ScrollView
@@ -249,6 +297,7 @@ const stylesNhanTin = StyleSheet.create({
   avatarImage: {
     width: 50,
     height: 50,
+    borderRadius: 50 / 2,
     marginLeft: 15,
     marginTop: 10,
     marginBottom: 10,

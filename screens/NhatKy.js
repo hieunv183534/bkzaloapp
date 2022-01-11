@@ -186,6 +186,7 @@ const NhatKy = ({ navigation }) => {
                   posts.push(curr)
                 }
               }
+              console.log("posts9999999999999999999: ", posts)
 
             }
             console.log("posts: ", posts)

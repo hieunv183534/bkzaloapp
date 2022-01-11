@@ -215,7 +215,7 @@ const DangBai = ({ navigation, route }) => {
                   style={stylesNhatKy.image2}
                   source={require('./assets/dangBai7.png')}
                 />
-                <TouchableOpacity onPress={uploadStatus}>
+                <TouchableOpacity >
                   <Image
                     style={stylesNhatKy.image2}
                     source={require('./assets/dangBai8.png')}
@@ -227,7 +227,7 @@ const DangBai = ({ navigation, route }) => {
         </View>
 
       </ScrollView>
-      <TouchableOpacity onPress={() => showToastWithGravityAndOffset()}>
+      <TouchableOpacity onPress={() => { uploadStatus(); showToastWithGravityAndOffset() }}>
         <Text style={{ marginLeft: 300, marginRight: 15, marginTop: 15, marginBottom: 15, backgroundColor: '#1e90ff', padding: 10, textAlign: 'center', color: 'white' }}>
           Đăng bài
           </Text>

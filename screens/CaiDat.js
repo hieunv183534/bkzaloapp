@@ -11,6 +11,7 @@ import {
   ScrollView,
   FlatList,
   ImageBackground,
+  ToastAndroid,
 } from 'react-native';
 import LogInImage from './assets/logIn.png';
 import AvatarImage1 from './assets/avatar1.png';
@@ -20,6 +21,15 @@ import { Feather } from 'react-native-vector-icons/Feather';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const CaiDat = ({ navigation }) => {
+  const showToastWithGravityAndOffset = (text) => {
+    ToastAndroid.showWithGravityAndOffset(
+      text,
+      ToastAndroid.LONG,
+      ToastAndroid.BOTTOM,
+      25,
+      50
+    );
+  };
   return (
     <View>
       <ScrollView>
@@ -232,7 +242,7 @@ const CaiDat = ({ navigation }) => {
             </View>
           </View>
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => { AsyncStorage.removeItem('token'); navigation.navigate('DangXuat') }}>
+        <TouchableOpacity onPress={() => { AsyncStorage.removeItem('token'); showToastWithGravityAndOffset("Đăng xuất thành công"); navigation.navigate('DangXuat') }}>
           <View
             style={{
               flexDirection: 'row',
