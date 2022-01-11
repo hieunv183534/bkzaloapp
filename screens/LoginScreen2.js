@@ -105,12 +105,14 @@ const LoginScreen2 = ({ navigation }) => {
           this.secondTextInput.focus();
         }}
         onChangeText={(text) => setPhone(text)}
+        value={phone}
         blurOnSubmit={false}
       />
       <TextInput
         style={stylesLogIn2.input}
         placeholder="Mật khẩu"
         onChangeText={(text) => setPassword(text)}
+        value={password}
         secureTextEntry
       />
       {/* <Input

@@ -11,6 +11,7 @@ import {
   ScrollView,
   FlatList,
   ImageBackground,
+  ToastAndroid,
 } from 'react-native';
 import LogInImage from './assets/logIn.png';
 import AvatarImage1 from './assets/avatar1.png';
@@ -33,6 +34,16 @@ const CaNhan = ({ navigation }) => {
 
     getAsyn();
   }, [isFocused]);
+
+  const showToastWithGravityAndOffset = (text) => {
+    ToastAndroid.showWithGravityAndOffset(
+      text,
+      ToastAndroid.LONG,
+      ToastAndroid.BOTTOM,
+      25,
+      50
+    );
+  };
 
   const getAsyn = () => {
     AsyncStorage.getItem('token').then((token) => {
@@ -71,6 +82,12 @@ const CaNhan = ({ navigation }) => {
         console.log("qqqqqqqqqqqqqqq ", base64data);
         onImgInfo(base64data);
       }
+    }).catch((error) => {
+      AsyncStorage.removeItem('token');
+      showToastWithGravityAndOffset("Tài khoản đã được đăng nhập máy khác");
+      navigation.navigate('DangXuat');
+      // console.error("9994554645:", error.data);
+      // console.error("9994554645:", error.code);
     });
   }
 
