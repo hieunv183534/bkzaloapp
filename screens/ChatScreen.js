@@ -33,6 +33,7 @@ const ChatScreen = (route) => {
     onToken(token.split(' ')[1]);
     onReceiveID(receiveID);
     onConversationId(conversationId)
+    console.log("image111111111: ", image);
 
     const conversationApi = new ConversationApi(token);
     conversationApi
@@ -71,7 +72,7 @@ const ChatScreen = (route) => {
   }, []);
 
   useEffect(() => {
-    const { token, conversationId, receiveID } = route.route.params;
+    const { token, conversationId, receiveID, image } = route.route.params;
     console.log("token: ", token.split(' ')[1]);
 
     const connection = new HubConnectionBuilder()
@@ -91,20 +92,21 @@ const ChatScreen = (route) => {
         for (let i in messages) {
           if (messages[i]._id === message.messageId) ex = true;
         }
+        console.log("image: ", image);
         const gui = receiveID === message.senderId ? 2 : 1;
         // console.log("gui: ", gui)
         // console.log("receiveID: ", receiveID)
         // console.log("message.senderId: ", message.senderId)
-        // console.log("message.receiverId: ", message.receiverId)
+        console.log("message.receiverId: ", message)
         if (!ex && gui === 2) {
           const mess = {
             _id: message.messageId,
             text: message.content,
-            createdAt: message.createdAt,
+            createdAt: new Date(),
             user: {
               _id: gui,
-              name: image !== null ? { uri: item.image } : require('./assets/zalologo.png'),
-              avatar: GiftedChat,
+              name: '',
+              avatar: image !== null ? image : require('./assets/zalologo.png'),
             },
           };
           setMessages((previousMessages) =>
