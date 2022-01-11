@@ -52,22 +52,30 @@ const DangBai = ({ navigation, route }) => {
 
   const uploadStatus = async () => {
     console.log('text: ', text);
-    console.log('imgInfo: ', imgInfo);
-    let arrImg = [];
-    arrImg.push(imgInfo);
-    console.log('arrImg: ', arrImg);
-    const fileApi = new FileApi(token);
+    console.log('token: ', token);
     const postApi = new PostApi(token);
-    fileApi.uploadFiles(arrImg).then((res) => {
-      // console.log('res: ', res);
-      console.log('fileApi: ', res.data);
-      // fileApi.getFile(res.data[0]).then((rest) => console.log("rest:", rest))
-      postApi.addPost(res.data, text).then((res) => {
-        console.log('resDANG: ', res);
+    let arrImg = [];
+
+    if (imgInfo !== null) {
+      arrImg.push(imgInfo);
+      console.log('arrImg: ', arrImg);
+      const fileApi = new FileApi(token);
+      fileApi.uploadFiles(arrImg).then((res) => {
+        // console.log('res: ', res);
+        console.log('fileApi: ', res.data);
+        // fileApi.getFile(res.data[0]).then((rest) => console.log("rest:", rest))
+        postApi.addPost(res.data, text).then((res) => {
+          console.log('resDANG: ', res);
+        });
+        navigation.navigate('NhatKy')
+        console.log('AAAAAAAAAAAAAAA');
       });
-      navigation.navigate('NhatKy')
-      console.log('AAAAAAAAAAAAAAA');
-    });
+    } else {
+      postApi.addPost([], text).then((res) => {
+        console.log('resDANG: ', res);
+        navigation.navigate('NhatKy')
+      }).catch((err) => console.log(err));
+    }
     console.log('Upload imgInfo store!');
   };
 

@@ -28,6 +28,8 @@ const NhatKy = ({ navigation }) => {
   const [token, onToken] = useState('');
   const [listPosts, onListPosts] = useState([]);
   const isFocused = useIsFocused();
+  const [imgInfo, onImgInfo] = useState(null);
+  const [avatarUrl, onAvatarUrl] = useState(null);
 
   const formatDateTime = (_date) => {
     if (_date != null) {
@@ -71,6 +73,7 @@ const NhatKy = ({ navigation }) => {
   const displayNhatKy = () => {
     AsyncStorage.getItem('token').then(async (data) => {
       onToken(data);
+      userInfo(data)
       const postApi = new PostApi(data);
       const fileApi = new FileApi(data);
       await postApi
@@ -85,26 +88,105 @@ const NhatKy = ({ navigation }) => {
               const img = conv[i].allMediaUrl;
               let blob;
               let base64data;
-              await fileApi.getFile(img).then((rest) => blob = rest.data);
-              const fileReaderInstance = new FileReader();
-              fileReaderInstance.readAsDataURL(blob);
-              fileReaderInstance.onload = () => {
-                base64data = fileReaderInstance.result;
-                base64data = base64data.replace('application/octet-stream', 'image/jpeg')
-                const curr = {
-                  id: conv[i].postId,
-                  name: conv[i].author.userName,
-                  image: './assets/avatar1.png',
-                  // imageUri: "data:image/png;base64," + blob,
-                  imageUri: base64data,
-                  time: conv[i].createdAt,
-                  content: conv[i].described,
-                  like: conv[i].like,
-                  comment: conv[i].comment,
-                  isLike: conv[i].isLiked,
-                };
-                posts.push(curr)
+              if (img !== "") {
+                await fileApi.getFile(img).then((rest) => blob = rest.data);
+                const fileReaderInstance = new FileReader();
+                fileReaderInstance.readAsDataURL(blob);
+                fileReaderInstance.onload = () => {
+                  base64data = fileReaderInstance.result;
+                  base64data = base64data.replace('application/octet-stream', 'image/jpeg')
+
+                  if (conv[i].author.avatarUrl !== null) {
+                    let blob2;
+                    let base64data2;
+                    const temp = []
+                    temp.push(conv[i].author.avatarUrl)
+                    console.log("conv[i].author.avatarUrl: ", conv[i].author.avatarUrl);
+                    fileApi.getFile(conv[i].author.avatarUrl).then((rest) => {
+                      blob2 = rest.data;
+                      const fileReaderInstance = new FileReader();
+                      fileReaderInstance.readAsDataURL(blob2);
+                      fileReaderInstance.onload = () => {
+                        base64data2 = fileReaderInstance.result;
+                        base64data2 = base64data2.replace('application/octet-stream', 'image/jpeg')
+                        const curr = {
+                          id: conv[i].postId,
+                          name: conv[i].author.userName,
+                          image: base64data2,
+                          // imageUri: "data:image/png;base64," + blob,
+                          imageUri: base64data,
+                          time: conv[i].createdAt,
+                          content: conv[i].described,
+                          like: conv[i].like,
+                          comment: conv[i].comment,
+                          isLike: conv[i].isLiked,
+                        };
+                        posts.push(curr)
+                      }
+                    });
+                  } else {
+                    const curr = {
+                      id: conv[i].postId,
+                      name: conv[i].author.userName,
+                      image: null,
+                      // imageUri: "data:image/png;base64," + blob,
+                      imageUri: base64data,
+                      time: conv[i].createdAt,
+                      content: conv[i].described,
+                      like: conv[i].like,
+                      comment: conv[i].comment,
+                      isLike: conv[i].isLiked,
+                    };
+                    console.log("!!!!!!22222: ", null);
+                    posts.push(curr)
+                  }
+                }
+              } else {
+                if (conv[i].author.avatarUrl !== null) {
+                  let blob2;
+                  let base64data2;
+                  const temp = []
+                  temp.push(conv[i].author.avatarUrl)
+                  fileApi.getFile(conv[i].author.avatarUrl).then((rest) => {
+                    blob2 = rest.data;
+                    const fileReaderInstance = new FileReader();
+                    fileReaderInstance.readAsDataURL(blob2);
+                    fileReaderInstance.onload = () => {
+                      base64data2 = fileReaderInstance.result;
+                      base64data2 = base64data2.replace('application/octet-stream', 'image/jpeg')
+                      const curr = {
+                        id: conv[i].postId,
+                        name: conv[i].author.userName,
+                        image: base64data2,
+                        // imageUri: "data:image/png;base64," + blob,
+                        imageUri: null,
+                        time: conv[i].createdAt,
+                        content: conv[i].described,
+                        like: conv[i].like,
+                        comment: conv[i].comment,
+                        isLike: conv[i].isLiked,
+                      };
+                      posts.push(curr)
+                    }
+                  });
+                } else {
+                  const curr = {
+                    id: conv[i].postId,
+                    name: conv[i].author.userName,
+                    image: null,
+                    // imageUri: "data:image/png;base64," + blob,
+                    imageUri: null,
+                    time: conv[i].createdAt,
+                    content: conv[i].described,
+                    like: conv[i].like,
+                    comment: conv[i].comment,
+                    isLike: conv[i].isLiked,
+                  };
+                  console.log("!!!!!!22222: ", null);
+                  posts.push(curr)
+                }
               }
+
             }
             console.log("posts: ", posts)
             onListPosts(posts);
@@ -113,6 +195,40 @@ const NhatKy = ({ navigation }) => {
         .catch((error) => {
           console.error(error);
         });
+    });
+  }
+
+  const getImage = (avatarUrl, token) => {
+    console.log("avatarUrl ", avatarUrl);
+    console.log("token ", token);
+
+    const fileApi = new FileApi(token);
+    fileApi.getFile(avatarUrl).then((rest) => {
+      let blob;
+      let base64data;
+      blob = rest.data;
+      const fileReaderInstance = new FileReader();
+      console.log("token: ", token);
+      console.log("blob: ", blob);
+
+      fileReaderInstance.readAsDataURL(blob);
+      fileReaderInstance.onload = () => {
+        base64data = fileReaderInstance.result;
+        base64data = base64data.replace('application/octet-stream', 'image/jpeg')
+        console.log("qqqqqqqqqqqqqqq ", base64data);
+        onImgInfo(base64data);
+      }
+    });
+  }
+
+  const userInfo = (token) => {
+    AsyncStorage.getItem('avatarUrl').then((data) => {
+      if (data !== null) {
+        onAvatarUrl(data)
+        getImage(data, token)
+      }
+      // onAvatarUrl(data);
+      // console.log("avatarUrl: ", data);
     });
   }
   useEffect(() => {
@@ -190,11 +306,11 @@ const NhatKy = ({ navigation }) => {
             onPress={() => navigation.navigate('TrangCaNhan')}>
             <Image
               style={stylesNhatKy.image1}
-              source={require('./assets/avatar1.png')}
+              source={imgInfo !== null ? { uri: imgInfo } : require('./assets/zalologo.png')}
             />
           </TouchableOpacity>
           <TouchableOpacity
-            onPress={() => navigation.navigate('DangBai', { imgInfo: null })}>
+            onPress={() => navigation.navigate('DangBai', { imgInfo: null, token: token })}>
             <Text style={stylesNhatKy.text1}>Hôm nay bạn thế nào?</Text>
           </TouchableOpacity>
         </View>
@@ -271,7 +387,7 @@ const NhatKy = ({ navigation }) => {
                     onPress={() => navigation.navigate('TrangCaNhan2')}>
                     <Image
                       style={stylesNhatKy.avatarPost}
-                      source={require('./assets/avatar2.png')}
+                      source={item.image !== null ? { uri: item.image } : require('./assets/zalologo.png')}
                     />
                   </TouchableOpacity>
                   {/* <TouchableOpacity activeOpacity={0.2} onPress={() =>{navigation.navigate('NhanTin2', {itemId: item.id, itemName: item.name,});}}> */}
@@ -286,11 +402,11 @@ const NhatKy = ({ navigation }) => {
                 />
               </View>
               <Text style={stylesNhatKy.contentPost}>{item.content}</Text>
-              <Image
+              {item.imageUri ? (<Image
                 style={stylesNhatKy.imagePost}
                 // source={require('./assets/baiDang1.png')}
                 source={{ uri: item.imageUri }}
-              />
+              />) : null}
               <View
                 style={{
                   flexDirection: 'row',
@@ -331,6 +447,7 @@ const stylesNhatKy = StyleSheet.create({
   image1: {
     width: 50,
     height: 50,
+    borderRadius: 50 / 2,
     marginBottom: 10,
     marginLeft: 15,
     marginRight: 10,
@@ -373,6 +490,7 @@ const stylesNhatKy = StyleSheet.create({
   avatarPost: {
     width: 40,
     height: 40,
+    borderRadius: 40 / 2,
     marginLeft: 15,
     marginTop: 10,
     marginBottom: 10,

@@ -21,12 +21,14 @@ import AccountApi from '../src/api/AccountApi';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { listUser } from '../data/listUser';
 import ConversationApi from '../src/api/ConversationApi';
+import { useIsFocused } from "@react-navigation/native";
 
 const NhanTin = ({ navigation }) => {
   const [conversations, setConversations] = useState([]);
   const [receive, onReceive] = useState([]);
   const [phoneInput, onChangePhoneInput] = useState('');
   const [token, onToken] = useState('');
+  const isFocused = useIsFocused();
 
   // useEffect(async () => {
   //   console.log('ConversationApi');
@@ -91,7 +93,7 @@ const NhanTin = ({ navigation }) => {
           console.error(error);
         });
     });
-  }, []);
+  }, [isFocused]);
 
   const getAccountByPhone = async (text) => {
     if (text !== '') {

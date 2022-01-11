@@ -24,6 +24,7 @@ class PostApi {
    */
   addPost(mediaUrls, described) {
     let body = { mediaUrls, described };
+    console.log("body: ", body)
     return BaseApiConfig.post('add_post', body, this.headers);
   }
 

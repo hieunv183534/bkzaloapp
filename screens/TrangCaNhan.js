@@ -21,21 +21,23 @@ import ImagePicker from 'react-native-image-crop-picker';
 import PostApi from '../src/api/PostApi';
 import FileApi from '../src/api/FileApi';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import AccountApi from '../src/api/AccountApi';
 
 const TrangCaNhan = ({ navigation, route }) => {
   const [singleFile, setSingleFile] = useState(null);
   const [imgInfo, onImgInfo] = useState(null);
   const [token, onToken] = useState('');
   const [userName, onUserName] = useState('');
+  const [tempUserName, onTempUserName] = useState('');
   const [avatarUrl, onAvatarUrl] = useState(null);
 
 
   useEffect(() => {
     const { avatarUrl, token, userName } = route.params;
-    console.log("avatarUrl: ", avatarUrl);
+    console.log("userName: ", userName);
     onToken(token);
     onUserName(userName)
-    const postApi = new PostApi(token);
+    onTempUserName(userName)
     if (avatarUrl !== null) {
       onAvatarUrl(avatarUrl)
       getImage(avatarUrl, token)
@@ -63,8 +65,21 @@ const TrangCaNhan = ({ navigation, route }) => {
         onImgInfo(base64data);
       }
     });
-
   }
+
+  const saveUserInfor = () => {
+    const accountApi = new AccountApi(token);
+    console.log("tempUserName: ", tempUserName);
+    console.log("avatarUrl: ", avatarUrl);
+    accountApi.editAccount(tempUserName, avatarUrl).then((res) => {
+      console.log('editAccount: ', res.data);
+      if (res.data.code === 1000) {
+        AsyncStorage.setItem('avatarUrl', avatarUrl);
+        AsyncStorage.setItem('userName', tempUserName);
+      }
+    })
+  }
+
   const selectFile = () => {
     // Opening Document Picker to select one file
     ImagePicker.openPicker({
@@ -83,10 +98,9 @@ const TrangCaNhan = ({ navigation, route }) => {
       fileApi.uploadFiles(arrImg).then((res) => {
         console.log('fileApi: ', res.data);
         if (res.data !== null && res.data[0] !== '') {
-          AsyncStorage.setItem('avatarUrl', res.data[0]);
-
+          onAvatarUrl(res.data[0])
+          // AsyncStorage.setItem('avatarUrl', res.data[0]);
           console.log('fileApi: ', res.data[0]);
-
           getImage(res.data[0], token)
         }
       })
@@ -121,15 +135,17 @@ const TrangCaNhan = ({ navigation, route }) => {
             />
           </TouchableOpacity>
         </ImageBackground>
-        <Text
+        <TextInput
           style={{
             fontSize: 16,
             color: 'black',
             textAlign: 'center',
             marginTop: 5,
-          }}>
-          {userName}
-        </Text>
+          }}
+          onChangeText={(text) => onTempUserName(text)}
+          value={tempUserName}
+        />
+
         <Text style={{ color: '#1e90ff', textAlign: 'center' }}>
           Thêm giới thiệu bản thân
         </Text>
@@ -154,7 +170,7 @@ const TrangCaNhan = ({ navigation, route }) => {
 
 
         </View>
-        <TouchableOpacity onPress={() => navigation.navigate('DangBai')}>
+        <TouchableOpacity onPress={() => saveUserInfor()}>
           <Text
             style={{
               backgroundColor: 'white',
@@ -167,7 +183,7 @@ const TrangCaNhan = ({ navigation, route }) => {
               marginBottom: 50,
               borderRadius: 50,
             }}>
-            Đăng bài
+            Lưu
           </Text>
         </TouchableOpacity>
       </ScrollView>

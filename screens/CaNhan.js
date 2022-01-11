@@ -19,12 +19,15 @@ import { color, onChange } from 'react-native-reanimated';
 import { Feather } from 'react-native-vector-icons/Feather';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useIsFocused } from "@react-navigation/native";
+import FileApi from '../src/api/FileApi';
 
 
 const CaNhan = ({ navigation }) => {
   const [token, onToken] = useState('');
   const [userName, onUserName] = useState('');
   const [avatarUrl, onAvatarUrl] = useState('');
+  const [imgInfo, onImgInfo] = useState(null);
+
   const isFocused = useIsFocused();
   useEffect(() => {
 
@@ -32,18 +35,49 @@ const CaNhan = ({ navigation }) => {
   }, [isFocused]);
 
   const getAsyn = () => {
-    AsyncStorage.getItem('token').then((data) => {
-      console.log("token: ", data);
-      onToken(data);
+    AsyncStorage.getItem('token').then((token) => {
+      console.log("token: ", token);
+      onToken(token);
+      AsyncStorage.getItem('avatarUrl').then((avatarUrl) => {
+        onAvatarUrl(avatarUrl);
+        console.log("avatarUrl: ", avatarUrl);
+        userInfo(token, avatarUrl)
+      });
     });
-    AsyncStorage.getItem('avatarUrl').then((data) => {
-      onAvatarUrl(data);
-      console.log("avatarUrl: ", data);
-    });
+
     AsyncStorage.getItem('userName').then((data) => {
       onUserName(data);
       console.log("userName: ", data);
     });
+  }
+
+  const getImage = (token, avatarUrl) => {
+    console.log("avatarUrl ", avatarUrl);
+    console.log("token ", token);
+
+    const fileApi = new FileApi(token);
+    fileApi.getFile(avatarUrl).then((rest) => {
+      let blob;
+      let base64data;
+      blob = rest.data;
+      const fileReaderInstance = new FileReader();
+      console.log("token: ", token);
+      console.log("blob: ", blob);
+
+      fileReaderInstance.readAsDataURL(blob);
+      fileReaderInstance.onload = () => {
+        base64data = fileReaderInstance.result;
+        base64data = base64data.replace('application/octet-stream', 'image/jpeg')
+        console.log("qqqqqqqqqqqqqqq ", base64data);
+        onImgInfo(base64data);
+      }
+    });
+  }
+
+  const userInfo = (token, avatarUrl) => {
+    if (avatarUrl !== null) {
+      getImage(token, avatarUrl)
+    }
   }
 
   return (
@@ -100,7 +134,7 @@ const CaNhan = ({ navigation }) => {
               onPress={() => navigation.navigate('TrangCaNhan', { userName: userName, avatarUrl: avatarUrl, token: token })}>
               <Image
                 style={stylesCaNhan.image1}
-                source={require('./assets/avatar1.png')}
+                source={imgInfo !== null ? { uri: imgInfo } : require('./assets/zalologo.png')}
               />
             </TouchableOpacity>
             <View>
@@ -210,6 +244,7 @@ const stylesCaNhan = StyleSheet.create({
   image1: {
     width: 50,
     height: 50,
+    borderRadius: 50 / 2,
     marginBottom: 15,
     marginLeft: 15,
     marginRight: 15,
