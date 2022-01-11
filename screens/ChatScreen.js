@@ -6,6 +6,7 @@ import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import ChatService from '../src/api/ChatService';
 import ConversationApi from '../src/api/ConversationApi';
 import { HubConnectionBuilder, LogLevel, HttpTransportType } from '@microsoft/signalr';
+import FileApi from '../src/api/FileApi';
 
 
 const ChatScreen = (route) => {
@@ -14,6 +15,7 @@ const ChatScreen = (route) => {
   const [userName, onUserName] = useState('');
   const [conversationId, onConversationId] = useState('');
   const [phone, onPhone] = useState('');
+  const [image, onImage] = useState('');
   const [token, onToken] = useState('');
   const [receiveID, onReceiveID] = useState('');
   const [chatServer, onChatServer] = useState(null);
@@ -24,14 +26,13 @@ const ChatScreen = (route) => {
   const [isConnected, setConnected] = useState(false);
 
   useEffect(() => {
-    const { userName, phone, token, receiveID, conversationId } = route.route.params;
+    const { userName, phone, token, receiveID, conversationId, image } = route.route.params;
     onUserName(userName);
     onPhone(phone);
+    onImage(image);
     onToken(token.split(' ')[1]);
     onReceiveID(receiveID);
     onConversationId(conversationId)
-    console.log("conversationId: ", conversationId);
-    console.log("userName: ", userName);
 
     const conversationApi = new ConversationApi(token);
     conversationApi
@@ -56,7 +57,7 @@ const ChatScreen = (route) => {
               user: {
                 _id: gui,
                 name: mess[i].sender.userName,
-                avatar: 'https://placeimg.com/140/140/any',
+                avatar: image !== null ? image : require('./assets/zalologo.png'),
               },
             };
             messages.push(curr)
@@ -83,18 +84,18 @@ const ChatScreen = (route) => {
       .build();
 
     connection.on("onmessage", (user, message) => {
-      console.log(`${user} say ${JSON.stringify(message)}`);
-      console.log("message.messageId: ", message.messageId);
+      // console.log(`${user} say ${JSON.stringify(message)}`);
+      // console.log("message.messageId: ", message.messageId);
       if (message.messageId !== undefined) {
         let ex = false;
         for (let i in messages) {
           if (messages[i]._id === message.messageId) ex = true;
         }
         const gui = receiveID === message.senderId ? 2 : 1;
-        console.log("gui: ", gui)
-        console.log("receiveID: ", receiveID)
-        console.log("message.senderId: ", message.senderId)
-        console.log("message.receiverId: ", message.receiverId)
+        // console.log("gui: ", gui)
+        // console.log("receiveID: ", receiveID)
+        // console.log("message.senderId: ", message.senderId)
+        // console.log("message.receiverId: ", message.receiverId)
         if (!ex && gui === 2) {
           const mess = {
             _id: message.messageId,
@@ -102,8 +103,8 @@ const ChatScreen = (route) => {
             createdAt: message.createdAt,
             user: {
               _id: gui,
-              name: '',
-              avatar: 'https://placeimg.com/140/140/any',
+              name: image !== null ? { uri: item.image } : require('./assets/zalologo.png'),
+              avatar: GiftedChat,
             },
           };
           setMessages((previousMessages) =>
@@ -111,7 +112,7 @@ const ChatScreen = (route) => {
           );
         }
       }
-      console.log("message123: ", message)
+      // console.log("message123: ", message)
     });
 
     connection.start().then(() => {

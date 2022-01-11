@@ -24,6 +24,7 @@ import { listUser } from '../data/listUser';
 import ConversationApi from '../src/api/ConversationApi';
 import { useIsFocused } from "@react-navigation/native";
 import FileApi from '../src/api/FileApi';
+import { HubConnectionBuilder, LogLevel, HttpTransportType } from '@microsoft/signalr';
 
 const NhanTin = ({ navigation }) => {
   const [conversations, setConversations] = useState([]);
@@ -31,6 +32,7 @@ const NhanTin = ({ navigation }) => {
   const [phoneInput, onChangePhoneInput] = useState('');
   const [token, onToken] = useState('');
   const isFocused = useIsFocused();
+  const [isNew, onIsNew] = useState(false);
 
   // useEffect(async () => {
   //   console.log('ConversationApi');
@@ -72,7 +74,12 @@ const NhanTin = ({ navigation }) => {
     //   setTimeout(()=>{
     //   displayConversation()
     // },10000)
-  }, [isFocused]);
+    console.log("isNew: ", isNew)
+  }, [isFocused, isNew]);
+
+  // setTimeout(() => {
+  //   onIsNew(!isNew)
+  // }, 10000)
 
   const displayConversation = () => {
     AsyncStorage.getItem('token').then(async (data) => {
@@ -95,10 +102,10 @@ const NhanTin = ({ navigation }) => {
               let base64data;
               if (img !== null) {
                 console.log("333333333333333333");
-                await fileApi.getFile(img).then((rest) => {
+                await fileApi.getFile(img).then(async (rest) => {
                   blob = rest.data;
                   const fileReaderInstance = new FileReader();
-                  fileReaderInstance.readAsDataURL(blob);
+                  await fileReaderInstance.readAsDataURL(blob);
                   fileReaderInstance.onload = () => {
                     base64data = fileReaderInstance.result;
                     base64data = base64data.replace('application/octet-stream', 'image/jpeg')
@@ -243,6 +250,7 @@ const NhanTin = ({ navigation }) => {
                     phone: item.phone,
                     token: token,
                     receiveID: item.id,
+                    image: item.image,
                   })
                 }>
                 <View style={{ flexDirection: 'row', marginTop: 0 }}>
