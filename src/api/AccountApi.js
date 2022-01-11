@@ -40,7 +40,7 @@ class AccountApi {
    * }
    */
   signup(userName, phoneNumber, password) {
-    let body = { userName, phoneNumber, password };
+    let body = { userName, phoneNumber, password, avatarUrl: '9b3580d3-7086-11ec-ac96-00155e015604Xebac11fd-96e7-4b1d-af7c-aef529c7c341.jpg' };
     return BaseApiConfig.post('signup', body, this.headers);
   }
 

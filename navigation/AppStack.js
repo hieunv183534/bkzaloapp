@@ -271,7 +271,7 @@ const AppStack = () => {
       />
       <Tab.Screen
         name="Messages"
-        component={MessageStack}
+        component={DanhBa}
         options={({ route }) => ({
           header: () => null,
           tabBarVisible: getTabBarVisibility(route),

@@ -23,6 +23,7 @@ import ImagePicker from 'react-native-image-crop-picker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import PostApi from '../src/api/PostApi';
 import CommentApi from '../src/api/CommentApi';
+import FileApi from '../src/api/FileApi';
 
 const BinhLuan = ({ navigation, route }) => {
   const [singleFile, setSingleFile] = useState(null);
@@ -34,9 +35,10 @@ const BinhLuan = ({ navigation, route }) => {
   useEffect(() => {
     const { item, token } = route.params;
     YellowBox.ignoreWarnings(['VirtualizedLists should never be nested']);
-    console.log("item: ", item.id);
+    console.log("item: ", item);
     onToken(token);
     onItem(item);
+    const fileApi = new FileApi(token);
     const commentApi = new CommentApi(token);
     commentApi
       .getComment(item.id, 0, 10)
@@ -46,15 +48,41 @@ const BinhLuan = ({ navigation, route }) => {
           let comments = [];
           const conv = res.data.data;
           for (let i in conv) {
-            const curr = {
-              id: conv[i].commentId,
-              name: conv[i].poster.userName,
-              content: conv[i].content,
-              url: require('./assets/avatar1.png'),
-              // imageUri: "data:image/png;base64," + blob,
-              time: conv[i].createdAt,
+
+            let blob;
+            let base64data;
+            const img = conv[i].poster.avatarUrl;
+            if (img !== "") {
+              await fileApi.getFile(img).then((rest) => blob = rest.data);
+              const fileReaderInstance = new FileReader();
+              fileReaderInstance.readAsDataURL(blob);
+              fileReaderInstance.onload = () => {
+                base64data = fileReaderInstance.result;
+                base64data = base64data.replace('application/octet-stream', 'image/jpeg')
+                const curr = {
+                  id: conv[i].commentId,
+                  name: conv[i].poster.userName,
+                  content: conv[i].content,
+                  url: base64data,
+                  // imageUri: "data:image/png;base64," + blob,
+                  time: conv[i].createdAt,
+                }
+                comments.push(curr)
+              }
+            } else {
+              const curr = {
+                id: conv[i].commentId,
+                name: conv[i].poster.userName,
+                content: conv[i].content,
+                url: null,
+                // imageUri: "data:image/png;base64," + blob,
+                time: conv[i].createdAt,
+              }
+              comments.push(curr)
             }
-            comments.push(curr)
+
+
+
 
           }
           comments = comments.reverse()
@@ -74,6 +102,7 @@ const BinhLuan = ({ navigation, route }) => {
       .then(async (res) => {
         console.log('commentApi: ', res.data);
         if (res.data.code === 1000) {
+          const fileApi = new FileApi(token);
 
           commentApi
             .getComment(item.id, 0, 10)
@@ -83,17 +112,45 @@ const BinhLuan = ({ navigation, route }) => {
                 let comments = [];
                 const conv = res.data.data;
                 for (let i in conv) {
-                  const curr = {
-                    id: conv[i].commentId,
-                    name: conv[i].poster.userName,
-                    content: conv[i].content,
-                    url: require('./assets/avatar1.png'),
-                    // imageUri: "data:image/png;base64," + blob,
-                    time: conv[i].createdAt,
+
+                  let blob;
+                  let base64data;
+                  const img = conv[i].poster.avatarUrl;
+                  if (img !== "") {
+                    await fileApi.getFile(img).then((rest) => blob = rest.data);
+                    const fileReaderInstance = new FileReader();
+                    fileReaderInstance.readAsDataURL(blob);
+                    fileReaderInstance.onload = () => {
+                      base64data = fileReaderInstance.result;
+                      base64data = base64data.replace('application/octet-stream', 'image/jpeg')
+                      const curr = {
+                        id: conv[i].commentId,
+                        name: conv[i].poster.userName,
+                        content: conv[i].content,
+                        url: base64data,
+                        // imageUri: "data:image/png;base64," + blob,
+                        time: conv[i].createdAt,
+                      }
+                      comments.push(curr)
+                    }
+                  } else {
+                    const curr = {
+                      id: conv[i].commentId,
+                      name: conv[i].poster.userName,
+                      content: conv[i].content,
+                      url: null,
+                      // imageUri: "data:image/png;base64," + blob,
+                      time: conv[i].createdAt,
+                    }
+                    comments.push(curr)
                   }
-                  comments.push(curr)
+
+
+
+
                 }
                 comments = comments.reverse()
+
                 onListComments(comments)
               }
             }).catch((error) => {
@@ -104,31 +161,7 @@ const BinhLuan = ({ navigation, route }) => {
         console.error(error);
       });
   }
-  const receive = [
-    {
-      id: "1",
-      name: "Enae",
-      content: "Yeuqua",
-      url: require('./assets/avatar1.png'),
-      time: "2022-01-10T14:16:34",
-    },
-    {
-      id: "2",
-      name: "AAAAAAAAnae",
-      content: "Yeuqua di",
-      url: require('./assets/avatar1.png'),
-      time: "2022-01-10T14:16:34",
 
-    },
-    {
-      id: "3",
-      name: "Oanh",
-      content: "Yeu em",
-      url: require('./assets/avatar1.png'),
-      time: "2022-01-10T14:16:34",
-
-    },
-  ]
   const formatDateTime = (_date) => {
     if (_date != null) {
       var date = new Date(_date);
@@ -179,7 +212,7 @@ const BinhLuan = ({ navigation, route }) => {
                 >
                   <Image
                     style={stylesNhatKy.avatarPost}
-                    source={require('./assets/avatar2.png')}
+                    source={item.image !== null ? { uri: item.image } : require('./assets/zalologo.png')}
                   />
                 </TouchableOpacity>
                 <View>
@@ -223,7 +256,7 @@ const BinhLuan = ({ navigation, route }) => {
                   }}>
                   <Image
                     style={stylesNhanTin.avatarImage}
-                    source={item.url}
+                    source={item.url !== null ? { uri: item.url } : require('./assets/zalologo.png')}
                   />
                   {/* </TouchableOpacity> */}
                   <ScrollView
@@ -371,6 +404,7 @@ const stylesNhatKy = StyleSheet.create({
   avatarPost: {
     width: 40,
     height: 40,
+    borderRadius: 40 / 2,
     marginLeft: 15,
     marginTop: 10,
     marginBottom: 10,
@@ -446,6 +480,7 @@ const stylesNhanTin = StyleSheet.create({
   avatarImage: {
     width: 50,
     height: 50,
+    borderRadius: 50 / 2,
     marginLeft: 15,
     marginTop: 10,
     marginBottom: 10,

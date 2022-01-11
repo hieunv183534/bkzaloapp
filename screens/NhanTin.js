@@ -213,7 +213,7 @@ const NhanTin = ({ navigation }) => {
           />
           <TextInput
             style={stylesSearchBar.input}
-            placeholder="Tìm bạn bè, tin nhắn NT..."
+            placeholder="Tìm bạn bè, tin nhắn..."
             // onChangeText={(text) => onChangePhoneInput(text)}
             onChangeText={(text) => getAccountByPhone(text)}
             placeholderTextColor="white"
