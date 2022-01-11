@@ -1,4 +1,4 @@
-import React, {useContext, useState} from 'react';
+import React, { useContext, useState } from 'react';
 import {
   Button,
   View,
@@ -11,19 +11,30 @@ import {
   ScrollView,
   FlatList,
   ImageBackground,
+  ToastAndroid,
 } from 'react-native';
 import LogInImage from './assets/logIn.png';
 import AvatarImage1 from './assets/avatar1.png';
 import LogInImage3 from './assets/logIn3.png';
-import {color, onChange} from 'react-native-reanimated';
-import {Feather} from 'react-native-vector-icons/Feather';
+import { color, onChange } from 'react-native-reanimated';
+import { Feather } from 'react-native-vector-icons/Feather';
 // import {signup} from '../src/api/AccountApi';
 import AccountApi from '../src/api/AccountApi';
 
-const SignUpScreen = ({navigation}) => {
+const SignUpScreen = ({ navigation }) => {
   const [phone, setPhone] = useState('');
   const [name, setName] = useState('');
   const [password, setPassword] = useState('');
+
+  const showToastWithGravityAndOffset = (text) => {
+    ToastAndroid.showWithGravityAndOffset(
+      text,
+      ToastAndroid.LONG,
+      ToastAndroid.BOTTOM,
+      25,
+      50
+    );
+  };
 
   const ProcessSignUp = async () => {
     if (phone.length != 0 && name.length != 0 && password.length != 0) {
@@ -34,6 +45,7 @@ const SignUpScreen = ({navigation}) => {
       await accountApi.signup(name, phone, password).then((res) => {
         console.log(res.data);
         if (res.data.code === 1000) {
+          showToastWithGravityAndOffset("Đăng xuất thành công");
           navigation.navigate('Login');
         }
       });
@@ -41,7 +53,7 @@ const SignUpScreen = ({navigation}) => {
   };
 
   return (
-    <View style={{flex: 1, backgroundColor: 'white'}}>
+    <View style={{ flex: 1, backgroundColor: 'white' }}>
       <Text style={stylesSignUp.text1}>
         Nhập số điện thoại của bạn để tạo tài khoản mới
       </Text>
@@ -92,7 +104,7 @@ const SignUpScreen = ({navigation}) => {
           style={stylesSignUp.button}
           // onPress={() => navigation.navigate('SignUpScreen2')}
           onPress={ProcessSignUp}>
-          <Text style={{color: 'white', fontSize: 20}}>➔</Text>
+          <Text style={{ color: 'white', fontSize: 20 }}>➔</Text>
         </TouchableOpacity>
       </View>
     </View>

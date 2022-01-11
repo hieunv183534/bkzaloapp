@@ -203,11 +203,11 @@ const NhatKy = ({ navigation }) => {
             console.log("posts: ", posts)
             onListPosts(posts);
           }
-        })
-        .catch((error) => {
+
+        }).catch(async (error) => {
+          await navigation.navigate('DangXuat');
           AsyncStorage.removeItem('token');
           showToastWithGravityAndOffset("Tài khoản đã được đăng nhập máy khác");
-          navigation.navigate('DangXuat');
           console.error(error);
         });
     });

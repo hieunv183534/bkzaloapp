@@ -69,6 +69,9 @@ const NhanTin = ({ navigation }) => {
 
   useEffect(() => {
     displayConversation()
+    //   setTimeout(()=>{
+    //   displayConversation()
+    // },10000)
   }, [isFocused]);
 
   const displayConversation = () => {
@@ -140,11 +143,11 @@ const NhanTin = ({ navigation }) => {
             onReceive(posts);
 
           }
-        })
-        .catch((error) => {
+        }).catch(async (error) => {
+          await navigation.navigate('DangXuat');
           AsyncStorage.removeItem('token');
           showToastWithGravityAndOffset("Tài khoản đã được đăng nhập máy khác");
-          navigation.navigate('DangXuat');
+
           // console.error("9994554645:", error.data);
           // console.error("9994554645:", error.code);
         });

@@ -11,6 +11,7 @@ import {
   ScrollView,
   FlatList,
   ImageBackground,
+  ToastAndroid,
 } from 'react-native';
 import LogInImage from './assets/logIn.png';
 import AvatarImage1 from './assets/avatar1.png';
@@ -67,6 +68,16 @@ const TrangCaNhan = ({ navigation, route }) => {
     });
   }
 
+  const showToastWithGravityAndOffset = (text) => {
+    ToastAndroid.showWithGravityAndOffset(
+      text,
+      ToastAndroid.LONG,
+      ToastAndroid.BOTTOM,
+      25,
+      50
+    );
+  };
+
   const saveUserInfor = () => {
     const accountApi = new AccountApi(token);
     console.log("tempUserName: ", tempUserName);
@@ -74,6 +85,7 @@ const TrangCaNhan = ({ navigation, route }) => {
     accountApi.editAccount(tempUserName, avatarUrl).then((res) => {
       console.log('editAccount: ', res.data);
       if (res.data.code === 1000) {
+        showToastWithGravityAndOffset("Thông tin đã được thay đổi");
         AsyncStorage.setItem('avatarUrl', avatarUrl);
         AsyncStorage.setItem('userName', tempUserName);
       }

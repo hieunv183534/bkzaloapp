@@ -82,10 +82,10 @@ const CaNhan = ({ navigation }) => {
         console.log("qqqqqqqqqqqqqqq ", base64data);
         onImgInfo(base64data);
       }
-    }).catch((error) => {
+    }).catch(async (error) => {
+      await navigation.navigate('DangXuat');
       AsyncStorage.removeItem('token');
       showToastWithGravityAndOffset("Tài khoản đã được đăng nhập máy khác");
-      navigation.navigate('DangXuat');
       // console.error("9994554645:", error.data);
       // console.error("9994554645:", error.code);
     });

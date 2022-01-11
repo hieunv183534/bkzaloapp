@@ -55,6 +55,7 @@ const LoginScreen2 = ({ navigation }) => {
               if (res.data.code === 1000) {
                 AsyncStorage.setItem('accountId', res.data.data.accountId);
                 AsyncStorage.setItem('userName', res.data.data.userName);
+                AsyncStorage.removeItem('avatarUrl');
                 AsyncStorage.setItem('avatarUrl', res.data.data.avatarUrl);
                 AsyncStorage.setItem('phoneNumber', res.data.data.phoneNumber);
                 console.log('avatarUrl', res.data.data.avatarUrl);
